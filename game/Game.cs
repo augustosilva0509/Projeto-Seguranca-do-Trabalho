@@ -22,35 +22,29 @@ namespace game
         {
             InitializeComponent();
             InitializeProjects();
-            SetGame();
+            SetGame(720);
             gTimerCounter();
             gProjectStateCheck();
         }
         public int gTimer = 30;
+        public int gCaseNumber = 1;
         public Project[] projects = new Project[4];
-        
-        public int gCase = 1;
-        public int[] gCaseIndicesCheck = {0,3,5};
-        public string[] gCaseNames = { "Escritório de Contabilidade", "Escritório A", "Escritório B", "Escritório C" };
+        public Project gProject;
         public void InitializeProjects()
         {
-            //implemeentar
+            int[] indexes = {0, 3, 5};
+            projects[0] = new Project("Escritório de Contabilidade", indexes);
+            indexes = new int[]{0, 1, 2};
+            projects[1] = new Project("Escritório A", indexes);
+            indexes = new int[]{5, 9};
+            projects[2] = new Project("Escritório B", indexes);
+            indexes = new int[] {};
+            projects[3] = new Project("Escritório C", indexes);
+            gProject = GetRandomProject();
         }
-        public async void gTimerCounter() {
-            if (gTimer == 0)
-            {
-                MessageBox.Show("Tempo esgotado!");
-                Application.Exit();
-            }
-                
-            await Task.Delay(1000);
-            gTimer--;
-            gTimerLbl.Text = $"{gTimer}";
-            gTimerCounter();
-        }
-        public void SetGame()
+        public void SetGame(int resolution)
         {
-            double resY = 720, resX = resY*16/9;
+            double resX = resolution * 16 / 9, resY = resolution;
             this.Size = new Size((int)(resX * 1.01), (int)(resY * 1.05));
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
@@ -68,10 +62,10 @@ namespace game
             gHeaderTitle.Parent = gHeaderBack;
             gHeaderTitle.Size = new Size((int)(resX * 0.52), (int)(resY * 0.15));
             gHeaderTitle.Location = new Point((int)(resX * 0.08), 0);
-            gHeaderTitle.Font = new Font("Arial", (float)(resY*0.027), FontStyle.Bold);
+            gHeaderTitle.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
             gHeaderTitle.BackColor = Color.Transparent;
             gHeaderTitle.ForeColor = Color.White;
-            gHeaderTitle.Text = $"Caso {gCase} - {GetRandomCaseName()}";
+            gHeaderTitle.Text = $"Caso {gCaseNumber} - {gProject.name}";
             gHeaderTitle.TextAlign = ContentAlignment.MiddleLeft;
             #endregion
             #region gTimer
@@ -84,7 +78,7 @@ namespace game
             gTimerLbl2.Parent = gHeaderBack;
             gTimerLbl2.Size = new Size((int)(resX * 0.05), (int)(resY * 0.12));
             gTimerLbl2.Location = new Point((int)(resX * 0.846), 0);
-            gTimerLbl2.Font = new Font("Arial", (float)(resY * 0.027), FontStyle.Bold);
+            gTimerLbl2.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
             gTimerLbl2.TextAlign = ContentAlignment.BottomLeft;
             gTimerLbl2.BackColor = Color.Transparent;
             gTimerLbl2.ForeColor = Color.White;
@@ -93,7 +87,7 @@ namespace game
             gTimerLbl.Parent = gHeaderBack;
             gTimerLbl.Size = new Size((int)(resX * 0.09), (int)(resY * 0.15));
             gTimerLbl.Location = new Point((int)(resX * 0.77), 0);
-            gTimerLbl.Font = new Font("Arial", (float)(resY * 0.072), FontStyle.Bold);
+            gTimerLbl.Font = new Font("Arial", (float)(resolution * 0.072), FontStyle.Bold);
             gTimerLbl.TextAlign = ContentAlignment.MiddleLeft;
             gTimerLbl.BackColor = Color.Transparent;
             gTimerLbl.ForeColor = Color.White;
@@ -129,7 +123,7 @@ namespace game
             clOptions.Parent = gRBarFormBack;
             clOptions.Location = new Point((int)(resX * 0.005625), (int)(resY*0.02));
             clOptions.Size = new Size(gRBarFormBack.Size.Width - clOptions.Location.X, gRBarFormBack.Size.Height - clOptions.Location.Y);
-            clOptions.Font = new Font("Arial", (float)(resY * 0.027), FontStyle.Bold);
+            clOptions.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
             clOptions.BackColor = Color.FromArgb(217, 217, 217);
 
             btnNext.Parent = gRBarBack;
@@ -139,7 +133,7 @@ namespace game
             btnNext.FlatStyle = FlatStyle.Flat;
             btnNext.FlatAppearance.BorderSize = 0;
             btnNext.Text = "Próximo";
-            btnNext.Font = new Font("Arial", (float)(resY * 0.02), FontStyle.Bold);
+            btnNext.Font = new Font("Arial", (float)(resolution * 0.02), FontStyle.Bold);
             #endregion
 
             #region Game Center
@@ -159,7 +153,7 @@ namespace game
             gImageDesc.Parent = gCenterBack;
             gImageDesc.Location = new Point(0, (int)(gImage.Size.Height + gImage.Location.Y + resY * 0.02));
             gImageDesc.Size = new Size((int)(resX * 0.28), (int)(resY * 0.05));
-            gImageDesc.Font = new Font("Arial", (float)(resY * 0.019), FontStyle.Bold);
+            gImageDesc.Font = new Font("Arial", (float)(resolution * 0.019), FontStyle.Bold);
             gImageDesc.BackColor = Color.Transparent;
             gImageDesc.ForeColor = Color.Black;
             gImageDesc.Text = "Estado do projeto: Aprovado";
@@ -167,21 +161,19 @@ namespace game
 
             #endregion
         }
-        private string GetRandomCaseName()
+        private Project GetRandomProject()
         {
-            if (gCase-1 >= gCaseNames.Length) //Condição de parada, provavelmente temporario
-                return "aaaaa";
+            if (gCaseNumber >= projects.Length) //Condição de parada, provavelmente temporario
+                return new Project("Nulo",new int[]{-1});
 
             Random random = new Random();
-            int caseNameIndex = 0;
-            while (gCaseNames[caseNameIndex] == "") {
-                caseNameIndex = random.Next(gCaseNames.Length);
+            int projectIndex = random.Next(projects.Length);
+            while (projects[projectIndex].IsUsed())
+            {
+                projectIndex = random.Next(projects.Length);
             }
-            string caseName = gCaseNames[caseNameIndex];
-            gCaseNames[caseNameIndex] = "";
-            return caseName;
+            return projects[projectIndex];
         }
-
         private bool isNumberInArray(int num, int[] numArray)
         {
             foreach(int n in numArray)
@@ -192,31 +184,32 @@ namespace game
         }
         private bool gCheckAnswer()
         {
+            if (clOptions.CheckedIndices.Count != gProject.checkindexes.Length)
+                return false;
+
+            int correctIndex = 0;
             foreach (int checkedIndex in clOptions.CheckedIndices)
             {
-                if (isNumberInArray(checkedIndex, gCaseIndicesCheck))
-                {
-                    return true;
-                }
-                else
-                {
-                    break;
-                }
+                if (isNumberInArray(checkedIndex, gProject.checkindexes))
+                    correctIndex++;
+                
             }
-            return false;
+            return clOptions.CheckedIndices.Count == correctIndex ? true : false;
         }
         private void btnNext_Click(object sender, EventArgs e)
         {
-            gCase++;
-            gHeaderTitle.Text = $"Caso {gCase} - {GetRandomCaseName()}";
-            
-            while (clOptions.CheckedIndices.Count > 0) {
-                clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
-            }
             if (gCheckAnswer())
             {
-                MessageBox.Show("acerto ebaaaa");
+                MessageBox.Show("aeee");
             }
+            while (clOptions.CheckedIndices.Count > 0)
+            {
+                clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
+            }
+            gProject = GetRandomProject();
+            gCaseNumber++;
+            gHeaderTitle.Text = $"Caso {gCaseNumber} - {gProject.name}";
+
             //Atualizar as imagens quando tivermos todas
         }
         private async void gProjectStateCheck()
@@ -228,7 +221,19 @@ namespace game
             await Task.Delay(50);
             gProjectStateCheck();
         }
+        public async void gTimerCounter()
+        {
+            if (gTimer == 0)
+            {
+                MessageBox.Show("Tempo esgotado!");
+                Application.Exit();
+            }
 
+            await Task.Delay(1000);
+            gTimer--;
+            gTimerLbl.Text = $"{gTimer}";
+            gTimerCounter();
+        }
 
     }
 }
