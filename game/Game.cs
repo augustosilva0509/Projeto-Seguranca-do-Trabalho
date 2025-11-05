@@ -169,7 +169,7 @@ namespace game
         }
         private string GetRandomCaseName()
         {
-            if (gCase-1 >= gCaseNames.Length) //provavelmente temporario
+            if (gCase-1 >= gCaseNames.Length) //Condição de parada, provavelmente temporario
                 return "aaaaa";
 
             Random random = new Random();
@@ -190,28 +190,30 @@ namespace game
             }
             return false;
         }
-        private void btnNext_Click(object sender, EventArgs e)
+        private bool gCheckAnswer()
         {
-            bool win = false;
-            gCase++;
-            gHeaderTitle.Text = $"Caso {gCase} - {GetRandomCaseName()}";
-
             foreach (int checkedIndex in clOptions.CheckedIndices)
             {
-                if(isNumberInArray(checkedIndex, gCaseIndicesCheck))
+                if (isNumberInArray(checkedIndex, gCaseIndicesCheck))
                 {
-                    win = true;
+                    return true;
                 }
                 else
                 {
-                    win = false;
                     break;
                 }
             }
+            return false;
+        }
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            gCase++;
+            gHeaderTitle.Text = $"Caso {gCase} - {GetRandomCaseName()}";
+            
             while (clOptions.CheckedIndices.Count > 0) {
                 clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
             }
-            if (win)
+            if (gCheckAnswer())
             {
                 MessageBox.Show("acerto ebaaaa");
             }
