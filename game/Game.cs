@@ -9,24 +9,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
 
 namespace game
 {
-    public partial class Form1 : Form
+    public partial class Game : Form
     {
-        // This will get the current WORKING directory(i.e. \bin\Debug)
         public static string workingDirectory = Environment.CurrentDirectory;
-        // or: Directory.GetCurrentDirectory() gives the same result
+        public static string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
 
-        // This will get the current PROJECT directory
-        public static string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName + "\\game";
-        public Form1()
+        public Game()
         {
             InitializeComponent();
+            InitializeProjects();
             SetGame();
             gTimerCounter();
+            gProjectStateCheck();
         }
         public int gTimer = 30;
+        public Project[] projects = new Project[4];
+        
+        public int gCase = 1;
+        public int[] gCaseIndicesCheck = {0,3,5};
+        public string[] gCaseNames = { "Escritório de Contabilidade", "Escritório A", "Escritório B", "Escritório C" };
+        public void InitializeProjects()
+        {
+            //implemeentar
+        }
         public async void gTimerCounter() {
             if (gTimer == 0)
             {
@@ -62,7 +71,7 @@ namespace game
             gHeaderTitle.Font = new Font("Arial", (float)(resY*0.027), FontStyle.Bold);
             gHeaderTitle.BackColor = Color.Transparent;
             gHeaderTitle.ForeColor = Color.White;
-            gHeaderTitle.Text = "Caso 1- Escritório de Contabilidade";
+            gHeaderTitle.Text = $"Caso {gCase} - {GetRandomCaseName()}";
             gHeaderTitle.TextAlign = ContentAlignment.MiddleLeft;
             #endregion
             #region gTimer
@@ -79,7 +88,7 @@ namespace game
             gTimerLbl2.TextAlign = ContentAlignment.BottomLeft;
             gTimerLbl2.BackColor = Color.Transparent;
             gTimerLbl2.ForeColor = Color.White;
-            gTimerLbl2.Text = "/30";
+            gTimerLbl2.Text = $"/{gTimer}";
 
             gTimerLbl.Parent = gHeaderBack;
             gTimerLbl.Size = new Size((int)(resX * 0.09), (int)(resY * 0.15));
@@ -88,7 +97,7 @@ namespace game
             gTimerLbl.TextAlign = ContentAlignment.MiddleLeft;
             gTimerLbl.BackColor = Color.Transparent;
             gTimerLbl.ForeColor = Color.White;
-            gTimerLbl.Text = "30";
+            gTimerLbl.Text = $"{gTimer}";
             #endregion
 
             #endregion
@@ -153,13 +162,71 @@ namespace game
             gImageDesc.Font = new Font("Arial", (float)(resY * 0.019), FontStyle.Bold);
             gImageDesc.BackColor = Color.Transparent;
             gImageDesc.ForeColor = Color.Black;
-            gImageDesc.Text = "Estado do projeto: Reprovado";
+            gImageDesc.Text = "Estado do projeto: Aprovado";
             gImageDesc.TextAlign = ContentAlignment.MiddleLeft;
 
             #endregion
         }
+        private string GetRandomCaseName()
+        {
+            if (gCase-1 >= gCaseNames.Length) //provavelmente temporario
+                return "aaaaa";
+
+            Random random = new Random();
+            int caseNameIndex = 0;
+            while (gCaseNames[caseNameIndex] == "") {
+                caseNameIndex = random.Next(gCaseNames.Length);
+            }
+            string caseName = gCaseNames[caseNameIndex];
+            gCaseNames[caseNameIndex] = "";
+            return caseName;
+        }
+
+        private bool isNumberInArray(int num, int[] numArray)
+        {
+            foreach(int n in numArray)
+            {
+                if(num==n) return true;
+            }
+            return false;
+        }
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            bool win = false;
+            gCase++;
+            gHeaderTitle.Text = $"Caso {gCase} - {GetRandomCaseName()}";
+
+            foreach (int checkedIndex in clOptions.CheckedIndices)
+            {
+                if(isNumberInArray(checkedIndex, gCaseIndicesCheck))
+                {
+                    win = true;
+                }
+                else
+                {
+                    win = false;
+                    break;
+                }
+            }
+            while (clOptions.CheckedIndices.Count > 0) {
+                clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
+            }
+            if (win)
+            {
+                MessageBox.Show("acerto ebaaaa");
+            }
+            //Atualizar as imagens quando tivermos todas
+        }
+        private async void gProjectStateCheck()
+        {
+            if (clOptions.CheckedItems.Count > 0)
+                gImageDesc.Text = "Estado do projeto: Reprovado";
+            else
+                gImageDesc.Text = "Estado do projeto: Aprovado";
+            await Task.Delay(50);
+            gProjectStateCheck();
+        }
 
 
-        
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace game
 {
-    partial class Form1
+    partial class Game
     {
         /// <summary>
         /// Variável de designer necessária.
@@ -127,6 +127,7 @@
             this.btnNext.TabIndex = 6;
             this.btnNext.Text = "button1";
             this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // gRBarForm
             // 
@@ -157,6 +158,7 @@
             // clOptions
             // 
             this.clOptions.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.clOptions.CheckOnClick = true;
             this.clOptions.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
             this.clOptions.FormattingEnabled = true;
             this.clOptions.Items.AddRange(new object[] {
@@ -170,7 +172,7 @@
             "Elemento",
             "Elemento",
             "Elemento"});
-            this.clOptions.Location = new System.Drawing.Point(16, 57);
+            this.clOptions.Location = new System.Drawing.Point(35, 60);
             this.clOptions.Name = "clOptions";
             this.clOptions.Size = new System.Drawing.Size(133, 62);
             this.clOptions.TabIndex = 5;
@@ -218,7 +220,7 @@
             this.gCenterBack.TabIndex = 4;
             this.gCenterBack.Text = "label1";
             // 
-            // Form1
+            // Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -226,8 +228,9 @@
             this.Controls.Add(this.gCenter);
             this.Controls.Add(this.gRBar);
             this.Controls.Add(this.gHeader);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Name = "Game";
+            this.Text = "Jogo";
             this.gHeader.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gTimerPict)).EndInit();
             this.gRBar.ResumeLayout(false);
