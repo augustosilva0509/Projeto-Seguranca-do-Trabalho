@@ -18,31 +18,21 @@ namespace game
         public static string workingDirectory = Environment.CurrentDirectory;
         public static string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
 
+        public int gTimer = 30;
+        public int gCaseNumber = 1;
+
+        public Project[] projects = new Project[4];
+        public Project gProject;
         public Game()
         {
             InitializeComponent();
-            InitializeProjects();
-            SetGame(720);
+            projects = Project.InitializeProjects();
+            gProject = Project.GetRandomProject(projects, gCaseNumber);
+            gSetDesign(720);
             gTimerCounter();
             gProjectStateCheck();
         }
-        public int gTimer = 30;
-        public int gCaseNumber = 1;
-        public Project[] projects = new Project[4];
-        public Project gProject;
-        public void InitializeProjects()
-        {
-            int[] indexes = {0, 3, 5};
-            projects[0] = new Project("Escritório de Contabilidade", indexes);
-            indexes = new int[]{0, 1, 2};
-            projects[1] = new Project("Escritório A", indexes);
-            indexes = new int[]{5, 9};
-            projects[2] = new Project("Escritório B", indexes);
-            indexes = new int[] {};
-            projects[3] = new Project("Escritório C", indexes);
-            gProject = GetRandomProject();
-        }
-        public void SetGame(int resolution)
+        public void gSetDesign(int resolution)
         {
             double resX = resolution * 16 / 9, resY = resolution;
             this.Size = new Size((int)(resX * 1.01), (int)(resY * 1.05));
@@ -161,19 +151,6 @@ namespace game
 
             #endregion
         }
-        private Project GetRandomProject()
-        {
-            if (gCaseNumber >= projects.Length) //Condição de parada, provavelmente temporario
-                return new Project("Nulo",new int[]{-1});
-
-            Random random = new Random();
-            int projectIndex = random.Next(projects.Length);
-            while (projects[projectIndex].IsUsed())
-            {
-                projectIndex = random.Next(projects.Length);
-            }
-            return projects[projectIndex];
-        }
         private bool isNumberInArray(int num, int[] numArray)
         {
             foreach(int n in numArray)
@@ -206,7 +183,7 @@ namespace game
             {
                 clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
             }
-            gProject = GetRandomProject();
+            gProject = Project.GetRandomProject(projects, gCaseNumber);
             gCaseNumber++;
             gHeaderTitle.Text = $"Caso {gCaseNumber} - {gProject.name}";
 
