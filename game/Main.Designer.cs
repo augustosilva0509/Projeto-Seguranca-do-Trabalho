@@ -1,6 +1,6 @@
 ﻿namespace game
 {
-    partial class Game
+    partial class Main
     {
         /// <summary>
         /// Variável de designer necessária.
@@ -35,6 +35,10 @@
             this.gHeaderTitle = new System.Windows.Forms.Label();
             this.gHeaderBack = new System.Windows.Forms.Label();
             this.gRBar = new System.Windows.Forms.GroupBox();
+            this.gCaseRisk = new System.Windows.Forms.Label();
+            this.gCaseWeight = new System.Windows.Forms.Label();
+            this.gCaseC = new System.Windows.Forms.Label();
+            this.gCaseP = new System.Windows.Forms.Label();
             this.btnNext = new System.Windows.Forms.Button();
             this.gRBarForm = new System.Windows.Forms.GroupBox();
             this.gRBarFormBack = new System.Windows.Forms.Label();
@@ -45,10 +49,6 @@
             this.gCenter = new System.Windows.Forms.GroupBox();
             this.gImageDesc = new System.Windows.Forms.Label();
             this.gCenterBack = new System.Windows.Forms.Label();
-            this.gCaseP = new System.Windows.Forms.Label();
-            this.gCaseC = new System.Windows.Forms.Label();
-            this.gCaseWeight = new System.Windows.Forms.Label();
-            this.gCaseRisk = new System.Windows.Forms.Label();
             this.gHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gTimerPict)).BeginInit();
             this.gRBar.SuspendLayout();
@@ -136,6 +136,43 @@
             this.gRBar.TabIndex = 1;
             this.gRBar.TabStop = false;
             // 
+            // gCaseRisk
+            // 
+            this.gCaseRisk.AutoSize = true;
+            this.gCaseRisk.Location = new System.Drawing.Point(143, 121);
+            this.gCaseRisk.Name = "gCaseRisk";
+            this.gCaseRisk.Size = new System.Drawing.Size(35, 13);
+            this.gCaseRisk.TabIndex = 12;
+            this.gCaseRisk.Text = "label1";
+            // 
+            // gCaseWeight
+            // 
+            this.gCaseWeight.AutoSize = true;
+            this.gCaseWeight.Location = new System.Drawing.Point(162, 39);
+            this.gCaseWeight.Name = "gCaseWeight";
+            this.gCaseWeight.Size = new System.Drawing.Size(35, 13);
+            this.gCaseWeight.TabIndex = 11;
+            this.gCaseWeight.Text = "label1";
+            // 
+            // gCaseC
+            // 
+            this.gCaseC.AutoSize = true;
+            this.gCaseC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gCaseC.Location = new System.Drawing.Point(103, 26);
+            this.gCaseC.Name = "gCaseC";
+            this.gCaseC.Size = new System.Drawing.Size(46, 17);
+            this.gCaseC.TabIndex = 10;
+            this.gCaseC.Text = "label1";
+            // 
+            // gCaseP
+            // 
+            this.gCaseP.AutoSize = true;
+            this.gCaseP.Location = new System.Drawing.Point(20, 33);
+            this.gCaseP.Name = "gCaseP";
+            this.gCaseP.Size = new System.Drawing.Size(35, 13);
+            this.gCaseP.TabIndex = 9;
+            this.gCaseP.Text = "label1";
+            // 
             // btnNext
             // 
             this.btnNext.Location = new System.Drawing.Point(0, 0);
@@ -145,7 +182,7 @@
             this.btnNext.TabIndex = 6;
             this.btnNext.Text = "button1";
             this.btnNext.UseVisualStyleBackColor = true;
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            this.btnNext.Click += new System.EventHandler(this.NextClick);
             // 
             // gRBarForm
             // 
@@ -243,44 +280,7 @@
             this.gCenterBack.TabIndex = 4;
             this.gCenterBack.Text = "label1";
             // 
-            // gCaseP
-            // 
-            this.gCaseP.AutoSize = true;
-            this.gCaseP.Location = new System.Drawing.Point(20, 33);
-            this.gCaseP.Name = "gCaseP";
-            this.gCaseP.Size = new System.Drawing.Size(35, 13);
-            this.gCaseP.TabIndex = 9;
-            this.gCaseP.Text = "label1";
-            // 
-            // gCaseC
-            // 
-            this.gCaseC.AutoSize = true;
-            this.gCaseC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gCaseC.Location = new System.Drawing.Point(103, 26);
-            this.gCaseC.Name = "gCaseC";
-            this.gCaseC.Size = new System.Drawing.Size(46, 17);
-            this.gCaseC.TabIndex = 10;
-            this.gCaseC.Text = "label1";
-            // 
-            // gCaseWeight
-            // 
-            this.gCaseWeight.AutoSize = true;
-            this.gCaseWeight.Location = new System.Drawing.Point(162, 39);
-            this.gCaseWeight.Name = "gCaseWeight";
-            this.gCaseWeight.Size = new System.Drawing.Size(35, 13);
-            this.gCaseWeight.TabIndex = 11;
-            this.gCaseWeight.Text = "label1";
-            // 
-            // gCaseRisk
-            // 
-            this.gCaseRisk.AutoSize = true;
-            this.gCaseRisk.Location = new System.Drawing.Point(143, 121);
-            this.gCaseRisk.Name = "gCaseRisk";
-            this.gCaseRisk.Size = new System.Drawing.Size(35, 13);
-            this.gCaseRisk.TabIndex = 12;
-            this.gCaseRisk.Text = "label1";
-            // 
-            // Game
+            // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -290,7 +290,7 @@
             this.Controls.Add(this.gHeader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.Name = "Game";
+            this.Name = "Main";
             this.Text = "Jogo";
             this.gHeader.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gTimerPict)).EndInit();
