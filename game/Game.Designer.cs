@@ -45,6 +45,10 @@
             this.gCenter = new System.Windows.Forms.GroupBox();
             this.gImageDesc = new System.Windows.Forms.Label();
             this.gCenterBack = new System.Windows.Forms.Label();
+            this.gCaseP = new System.Windows.Forms.Label();
+            this.gCaseC = new System.Windows.Forms.Label();
+            this.gCaseWeight = new System.Windows.Forms.Label();
+            this.gCaseRisk = new System.Windows.Forms.Label();
             this.gHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gTimerPict)).BeginInit();
             this.gRBar.SuspendLayout();
@@ -61,9 +65,9 @@
             this.gHeader.Controls.Add(this.gHeaderTitle);
             this.gHeader.Controls.Add(this.gHeaderBack);
             this.gHeader.Location = new System.Drawing.Point(1, 10);
-            this.gHeader.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gHeader.Margin = new System.Windows.Forms.Padding(2);
             this.gHeader.Name = "gHeader";
-            this.gHeader.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gHeader.Padding = new System.Windows.Forms.Padding(2);
             this.gHeader.Size = new System.Drawing.Size(960, 88);
             this.gHeader.TabIndex = 0;
             this.gHeader.TabStop = false;
@@ -89,7 +93,7 @@
             // gTimerPict
             // 
             this.gTimerPict.Location = new System.Drawing.Point(632, 21);
-            this.gTimerPict.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gTimerPict.Margin = new System.Windows.Forms.Padding(2);
             this.gTimerPict.Name = "gTimerPict";
             this.gTimerPict.Size = new System.Drawing.Size(75, 41);
             this.gTimerPict.TabIndex = 1;
@@ -116,14 +120,18 @@
             // 
             // gRBar
             // 
+            this.gRBar.Controls.Add(this.gCaseRisk);
+            this.gRBar.Controls.Add(this.gCaseWeight);
+            this.gRBar.Controls.Add(this.gCaseC);
+            this.gRBar.Controls.Add(this.gCaseP);
             this.gRBar.Controls.Add(this.btnNext);
             this.gRBar.Controls.Add(this.gRBarForm);
             this.gRBar.Controls.Add(this.clOptions);
             this.gRBar.Controls.Add(this.gRBarBack);
             this.gRBar.Location = new System.Drawing.Point(694, 114);
-            this.gRBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gRBar.Margin = new System.Windows.Forms.Padding(2);
             this.gRBar.Name = "gRBar";
-            this.gRBar.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gRBar.Padding = new System.Windows.Forms.Padding(2);
             this.gRBar.Size = new System.Drawing.Size(230, 321);
             this.gRBar.TabIndex = 1;
             this.gRBar.TabStop = false;
@@ -131,7 +139,7 @@
             // btnNext
             // 
             this.btnNext.Location = new System.Drawing.Point(0, 0);
-            this.btnNext.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNext.Margin = new System.Windows.Forms.Padding(2);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(56, 19);
             this.btnNext.TabIndex = 6;
@@ -144,9 +152,9 @@
             this.gRBarForm.Controls.Add(this.gRBarFormBack);
             this.gRBarForm.Controls.Add(this.gRBarFormBorder);
             this.gRBarForm.Location = new System.Drawing.Point(37, 144);
-            this.gRBarForm.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gRBarForm.Margin = new System.Windows.Forms.Padding(2);
             this.gRBarForm.Name = "gRBarForm";
-            this.gRBarForm.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gRBarForm.Padding = new System.Windows.Forms.Padding(2);
             this.gRBarForm.Size = new System.Drawing.Size(150, 81);
             this.gRBarForm.TabIndex = 8;
             this.gRBarForm.TabStop = false;
@@ -176,18 +184,12 @@
             this.clOptions.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
             this.clOptions.FormattingEnabled = true;
             this.clOptions.Items.AddRange(new object[] {
-            "Elemento",
-            "Elemento",
-            "Elemento",
-            "Elemento",
-            "Elemento",
-            "Elemento",
-            "Elemento",
-            "Elemento",
-            "Elemento",
-            "Elemento"});
+            "Extintores de incêndio",
+            "Saídas de emergência",
+            "Rotas de fuga",
+            "Alarmes de incêndio"});
             this.clOptions.Location = new System.Drawing.Point(26, 49);
-            this.clOptions.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.clOptions.Margin = new System.Windows.Forms.Padding(2);
             this.clOptions.Name = "clOptions";
             this.clOptions.Size = new System.Drawing.Size(100, 50);
             this.clOptions.TabIndex = 5;
@@ -204,7 +206,7 @@
             // gImage
             // 
             this.gImage.Location = new System.Drawing.Point(35, 17);
-            this.gImage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gImage.Margin = new System.Windows.Forms.Padding(2);
             this.gImage.Name = "gImage";
             this.gImage.Size = new System.Drawing.Size(500, 267);
             this.gImage.TabIndex = 2;
@@ -216,9 +218,9 @@
             this.gCenter.Controls.Add(this.gImage);
             this.gCenter.Controls.Add(this.gCenterBack);
             this.gCenter.Location = new System.Drawing.Point(38, 128);
-            this.gCenter.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gCenter.Margin = new System.Windows.Forms.Padding(2);
             this.gCenter.Name = "gCenter";
-            this.gCenter.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.gCenter.Padding = new System.Windows.Forms.Padding(2);
             this.gCenter.Size = new System.Drawing.Size(557, 326);
             this.gCenter.TabIndex = 3;
             this.gCenter.TabStop = false;
@@ -241,6 +243,43 @@
             this.gCenterBack.TabIndex = 4;
             this.gCenterBack.Text = "label1";
             // 
+            // gCaseP
+            // 
+            this.gCaseP.AutoSize = true;
+            this.gCaseP.Location = new System.Drawing.Point(20, 33);
+            this.gCaseP.Name = "gCaseP";
+            this.gCaseP.Size = new System.Drawing.Size(35, 13);
+            this.gCaseP.TabIndex = 9;
+            this.gCaseP.Text = "label1";
+            // 
+            // gCaseC
+            // 
+            this.gCaseC.AutoSize = true;
+            this.gCaseC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gCaseC.Location = new System.Drawing.Point(103, 26);
+            this.gCaseC.Name = "gCaseC";
+            this.gCaseC.Size = new System.Drawing.Size(46, 17);
+            this.gCaseC.TabIndex = 10;
+            this.gCaseC.Text = "label1";
+            // 
+            // gCaseWeight
+            // 
+            this.gCaseWeight.AutoSize = true;
+            this.gCaseWeight.Location = new System.Drawing.Point(162, 39);
+            this.gCaseWeight.Name = "gCaseWeight";
+            this.gCaseWeight.Size = new System.Drawing.Size(35, 13);
+            this.gCaseWeight.TabIndex = 11;
+            this.gCaseWeight.Text = "label1";
+            // 
+            // gCaseRisk
+            // 
+            this.gCaseRisk.AutoSize = true;
+            this.gCaseRisk.Location = new System.Drawing.Point(143, 121);
+            this.gCaseRisk.Name = "gCaseRisk";
+            this.gCaseRisk.Size = new System.Drawing.Size(35, 13);
+            this.gCaseRisk.TabIndex = 12;
+            this.gCaseRisk.Text = "label1";
+            // 
             // Game
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -250,12 +289,13 @@
             this.Controls.Add(this.gRBar);
             this.Controls.Add(this.gHeader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Game";
             this.Text = "Jogo";
             this.gHeader.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gTimerPict)).EndInit();
             this.gRBar.ResumeLayout(false);
+            this.gRBar.PerformLayout();
             this.gRBarForm.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gImage)).EndInit();
             this.gCenter.ResumeLayout(false);
@@ -282,6 +322,10 @@
         private System.Windows.Forms.Label gRBarFormBack;
         private System.Windows.Forms.Label gRBarFormBorder;
         private System.Windows.Forms.CheckedListBox clOptions;
+        private System.Windows.Forms.Label gCaseRisk;
+        private System.Windows.Forms.Label gCaseWeight;
+        private System.Windows.Forms.Label gCaseC;
+        private System.Windows.Forms.Label gCaseP;
     }
 }
 

@@ -15,9 +15,7 @@ namespace game
 {
     public partial class Game : Form
     {
-        public static string workingDirectory = Environment.CurrentDirectory;
-        public static string projectDirectory = Directory.GetParent(workingDirectory).Parent.FullName;
-
+        public static string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
         public int gTimer = 30;
         public int gCaseNumber = 1;
 
@@ -105,15 +103,39 @@ namespace game
             gRBarFormBorder.BackColor = Color.FromArgb(228, 87, 87);
             gRBarFormBorder.Text = "";
 
-            gRBarFormBack.Location = new Point((int)(resX * 0.014*9/16), (int)(resY * 0.014));
+            gRBarFormBack.Location = new Point((int)(resX * 0.007875), (int)(resY * 0.014));
             gRBarFormBack.Size = new Size((int)(resX * 0.25 - gRBarFormBack.Location.X * 2), (int)(resY * 0.56 - gRBarFormBack.Location.Y * 2));
             gRBarFormBack.BackColor = Color.FromArgb(217, 217, 217);
             gRBarFormBack.Text = "";
 
+            gCaseRisk.Parent = gRBarFormBack;
+            gCaseRisk.Location = new Point((int)(resX * 0.005), (int)(resY * 0.04));
+            gCaseRisk.Font = new Font("Arial", 10, FontStyle.Bold);
+            gCaseRisk.Text = $"Risco: {gProject.RiskText()}";
+            gCaseRisk.ForeColor = Color.Black;
+
+            gCaseWeight.Parent = gRBarFormBack;
+            gCaseWeight.Location = new Point((int)(resX * 0.112125), (int)(resY * 0.04));
+            gCaseWeight.Font = new Font("Arial", 10, FontStyle.Bold);
+            gCaseWeight.Text = $"Gravidade: {gProject.WeightText()}";
+            gCaseWeight.ForeColor = Color.Black;
+
+            gCaseC.Parent = gRBarFormBack;
+            gCaseC.Location = new Point((int)(resX * 0.005), (int)(resY * 0.08));
+            gCaseC.Font = new Font("Arial", 12, FontStyle.Bold);
+            gCaseC.Text = $"Capacidade de Passagem: {gProject.c}";
+            gCaseC.ForeColor = Color.Black;
+
+            gCaseP.Parent = gRBarFormBack;
+            gCaseP.Location = new Point((int)(resX * 0.005), (int)(resY * 0.12));
+            gCaseP.Font = new Font("Arial", 12, FontStyle.Bold);
+            gCaseP.Text = $"População: {gProject.p}";
+            gCaseP.ForeColor = Color.Black;
+
             clOptions.Parent = gRBarFormBack;
-            clOptions.Location = new Point((int)(resX * 0.005625), (int)(resY*0.02));
+            clOptions.Location = new Point((int)(resX * 0.005625), (int)(resY*0.266));
             clOptions.Size = new Size(gRBarFormBack.Size.Width - clOptions.Location.X, gRBarFormBack.Size.Height - clOptions.Location.Y);
-            clOptions.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
+            clOptions.Font = new Font("Arial", (float)(resolution * 0.025), FontStyle.Bold);
             clOptions.BackColor = Color.FromArgb(217, 217, 217);
 
             btnNext.Parent = gRBarBack;
@@ -136,9 +158,9 @@ namespace game
             gCenterBack.Text = "";
 
             gImage.Parent = gCenterBack;
-            gImage.Size = new Size((int)(resX * 0.62), (int)(resY * 0.6));
+            gImage.Size = new Size((int)(resX * 0.6), (int)(resY * 0.6));
             gImage.Location = new Point(0, 0);
-            gImage.BackColor = Color.Cyan;
+            gImage.BackColor = Color.Blue;
 
             gImageDesc.Parent = gCenterBack;
             gImageDesc.Location = new Point(0, (int)(gImage.Size.Height + gImage.Location.Y + resY * 0.02));
@@ -173,28 +195,35 @@ namespace game
             }
             return clOptions.CheckedIndices.Count == correctIndex ? true : false;
         }
+        private void UpdateCase()
+        {
+            gHeaderTitle.Text = $"Caso {gCaseNumber} - {gProject.name}";
+            gCaseRisk.Text = $"Risco: {gProject.RiskText()}";
+            gCaseWeight.Text = $"Gravidade: {gProject.WeightText()}";
+            gCaseC.Text = $"Capacidade de Passagem: {gProject.c}";
+            gCaseP.Text = $"População: {gProject.p}";
+            gImage.Image = Image.FromFile(projectDirectory + $"\\img\\{gProject.imgName}");
+            gCaseNumber++;
+        }
         private void btnNext_Click(object sender, EventArgs e)
         {
             if (gCheckAnswer())
             {
-                MessageBox.Show("aeee");
+                MessageBox.Show("ebaa");
             }
             while (clOptions.CheckedIndices.Count > 0)
             {
                 clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
             }
             gProject = Project.GetRandomProject(projects, gCaseNumber);
-            gCaseNumber++;
-            gHeaderTitle.Text = $"Caso {gCaseNumber} - {gProject.name}";
-
-            //Atualizar as imagens quando tivermos todas
+            UpdateCase();
         }
         private async void gProjectStateCheck()
         {
-            if (clOptions.CheckedItems.Count > 0)
-                gImageDesc.Text = "Estado do projeto: Reprovado";
-            else
+            if (clOptions.CheckedItems.Count == 4)
                 gImageDesc.Text = "Estado do projeto: Aprovado";
+            else
+                gImageDesc.Text = "Estado do projeto: Reprovado";
             await Task.Delay(50);
             gProjectStateCheck();
         }
