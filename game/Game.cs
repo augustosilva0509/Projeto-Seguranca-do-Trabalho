@@ -181,6 +181,15 @@ namespace game
             }
             return false;
         }
+        private int[] GetErrorIndices()
+        {
+            var setA = new HashSet<int>(clOptions.CheckedIndices.Cast<int>());
+            var setB = new HashSet<int>(gProject.checkindexes);
+
+            setA.SymmetricExceptWith(setB);
+
+            return setA.ToArray<int>();
+        }
         private bool gCheckAnswer()
         {
             if (clOptions.CheckedIndices.Count != gProject.checkindexes.Length)
