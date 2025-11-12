@@ -12,15 +12,17 @@ namespace game
     {
         private const int maxNumberOfCases = 4;
         private Project[] projects = new Project[maxNumberOfCases];
+        private int timer;
 
-        public int timer;
+        public int maxTimer;
         public int caseNumber;
         public Result results;
         public Project currentCase;
 
-        public Game(int timer, Label lblTimer) 
+        public Game(int maxTimer, Label lblTimer) 
         {
-            this.timer = timer;
+            this.maxTimer = maxTimer;
+            this.timer = this.maxTimer;
             this.caseNumber = 1;
             this.results = new Result(maxNumberOfCases);
             this.projects = Project.InitializeProjects();
@@ -31,6 +33,7 @@ namespace game
         {
             this.results.UpdateCase(this.currentCase, GetErrorIndices(clb, this.currentCase));
             this.currentCase = Project.GetRandomProject(this.projects, this.caseNumber);
+            this.timer = this.maxTimer;
             this.caseNumber++;
         }
         private int[] GetErrorIndices(CheckedListBox clb, Project project)

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -65,7 +66,7 @@ namespace game
             gTimerLbl2.TextAlign = ContentAlignment.BottomLeft;
             gTimerLbl2.BackColor = Color.Transparent;
             gTimerLbl2.ForeColor = Color.White;
-            gTimerLbl2.Text = $"/{game.timer}";
+            gTimerLbl2.Text = $"/{game.maxTimer}";
 
             gTimerLbl.Parent = gHeaderBack;
             gTimerLbl.Size = new Size((int)(resX * 0.09), (int)(resY * 0.15));
@@ -74,7 +75,7 @@ namespace game
             gTimerLbl.TextAlign = ContentAlignment.MiddleLeft;
             gTimerLbl.BackColor = Color.Transparent;
             gTimerLbl.ForeColor = Color.White;
-            gTimerLbl.Text = $"{game.timer}";
+            gTimerLbl.Text = $"{game.maxTimer}";
             #endregion
 
             #endregion
@@ -170,6 +171,7 @@ namespace game
             gCaseC.Text = $"Capacidade de Passagem: {game.currentCase.c}";
             gCaseP.Text = $"População: {game.currentCase.p}";
             gImage.Image = Image.FromFile(projectDirectory + $"\\img\\{game.currentCase.imgName}");
+            gTimerLbl.Text = $"{game.maxTimer}";
             while (clOptions.CheckedIndices.Count > 0)
             {
                 clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
@@ -201,8 +203,8 @@ namespace game
             Label gpbResultBorder = new Label();
             Label lblResultado = new Label();
 
-            GroupBox[] gpbResultCase = new GroupBox[4] { new GroupBox(), new GroupBox(), new GroupBox(), new GroupBox() };
-            GroupBox[] gpbResultCaseBack = new GroupBox[4] { new GroupBox(), new GroupBox(), new GroupBox(), new GroupBox() };
+            Panel[] gpbResultCase = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
+            Panel[] gpbResultCaseBack = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
             Label[] lblCaseName = new Label[4] { new Label(), new Label(), new Label(), new Label() };
             Label[] lblTextos = new Label[4] { new Label(), new Label(), new Label(), new Label() };
 
@@ -225,7 +227,7 @@ namespace game
             lblResultado.Text = "Resultado final";
             lblResultado.Font = new Font("Arial", (int)(resolution * 0.05), FontStyle.Bold);
             lblResultado.BackColor = Color.Transparent;
-            lblResultado.ForeColor = Color.FromArgb(228, 87, 87);
+            lblResultado.ForeColor = Color.FromArgb(228, 60, 60);
             lblResultado.AutoSize = true;
             lblResultado.Location = new Point((int)(gpbResult.Size.Width * 0.5 - lblResultado.Size.Width * 0.5), (int)(gpbResult.Size.Height * 0.05));
             int j = 0, z = 0; string name = ""; string[] indexesResults = new string[4];
@@ -235,48 +237,45 @@ namespace game
                 indexesResults = game.results.IndexesResults();
 
                 gpbResultCase[i].Parent = gpbResultBack;
-                gpbResultCase[i].Location = new Point((int)(gpbResultBack.Size.Width * (j * 0.5)), (int)(gpbResultBack.Size.Height * (0.2 + (z * 0.3))));
+                gpbResultCase[i].Location = new Point((int)(j), (int)(gpbResultBack.Size.Height * 0.2 + z));
                 gpbResultCase[i].Size = new Size((int)(gpbResultBack.Size.Width * 0.5), (int)(gpbResultBack.Size.Height * 0.3));
-                gpbResultCase[i].BackColor = Color.FromArgb(195, 195, 195);
+                gpbResultCase[i].BackColor = Color.FromArgb(217, 217, 217);
 
                 gpbResultCaseBack[i].Parent = gpbResultCase[i];
                 gpbResultCaseBack[i].Location = new Point(0, 0);
                 gpbResultCaseBack[i].Size = new Size(gpbResultCase[i].Size.Width, gpbResultCase[i].Size.Height);
-                gpbResultCaseBack[i].BackColor = Color.FromArgb(195, 195, 195);
+                gpbResultCaseBack[i].BackColor = Color.FromArgb(205, 205, 205);
                 gpbResultCaseBack[i].Text = "";
 
                 lblCaseName[i].Parent = gpbResultCaseBack[i];
                 lblCaseName[i].AutoSize = true;
                 lblCaseName[i].Text = $"{name}";
                 lblCaseName[i].Font = new Font("Arial", (int)(resolution * 0.02), FontStyle.Bold);
-                lblCaseName[i].BackColor = Color.FromArgb(195, 195, 195);
+                lblCaseName[i].BackColor = Color.FromArgb(205, 205, 205);
                 lblCaseName[i].ForeColor = Color.Black;
                 lblCaseName[i].Location = new Point((int)(gpbResultCase[i].Size.Width * 0.5 - lblCaseName[i].Size.Width * 0.5), (int)(gpbResultCase[i].Size.Height * 0.06));
                 gpbResultCaseBack[i].Controls.Add(lblCaseName[i]);
 
                 lblTextos[i].Parent = gpbResultCaseBack[i];
                 lblTextos[i].AutoSize = true;
-                lblTextos[i].Text = $"Extintores de incêndio = {indexesResults[0]}\nSaídas de emergência = {indexesResults[1]}\nRotas de fuga = {indexesResults[2]}\nAlarmes de incêndio = {indexesResults[3]}";
+                lblTextos[i].Text = $"Extintores de incêndio: {indexesResults[0]}\nSaídas de emergência: {indexesResults[1]}\nRotas de fuga: {indexesResults[2]}\nAlarmes de incêndio: {indexesResults[3]}";
                 lblTextos[i].Font = new Font("Arial", (int)(resolution * 0.015), FontStyle.Bold);
                 lblTextos[i].BackColor = Color.Transparent;
                 lblTextos[i].ForeColor = Color.Black;
                 lblTextos[i].Location = new Point((int)(gpbResultCase[i].Size.Width * 0.05), (int)(gpbResultCase[i].Size.Height * 0.3));
                 lblTextos[i].TextAlign = ContentAlignment.MiddleRight;
-
                 gpbResultCaseBack[i].Controls.Add(lblTextos[i]);
 
                 gpbResultCase[i].Controls.Add(gpbResultCaseBack[i]);
                 gpbResultBack.Controls.Add(gpbResultCase[i]);
                 if(j==0)
-                    j++;
+                    j = gpbResultCase[i].Size.Width;
                 else if (z == 0)
                 {
-                    z++;
+                    z = gpbResultCase[i].Size.Height;
                     j = 0;
                 }
-                
             }
-
             gpbResult.Controls.Add(lblResultado);
             gpbResult.Controls.Add(gpbResultBack);
             gpbResult.Controls.Add(gpbResultBorder);

@@ -52,7 +52,7 @@ namespace game
         {
             Project[] projects = new Project[4];
             projects[0] = new Project("Escritório de Contabilidade", new int[] { 0, 1, 3 }, 1, 2, Weight.Small, Risk.Small, "cyan.png");
-            projects[1] = new Project("Escritório A", new int[] { 0, 1, 2 }, 3, 4, Weight.High, Risk.Small, "yellow.png");
+            projects[1] = new Project("Escritório A", new int[] { 0, 1, 2 , 3}, 3, 4, Weight.High, Risk.Small, "yellow.png");
             projects[2] = new Project("Escritório B", new int[] { 2, 3 }, 5, 6, Weight.Medium, Risk.Medium, "pink.png");
             projects[3] = new Project("Escritório C", new int[] { }, 7, 8, Weight.Small, Risk.High, "blue.png");
             return projects;
