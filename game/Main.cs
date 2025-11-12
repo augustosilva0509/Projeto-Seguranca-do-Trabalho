@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -187,10 +188,100 @@ namespace game
         {
             game.UpdateCase(clOptions);
             UpdateMainGame();
+            if (game.End())
+                EndGame(720);
         }
-        public void EndGame()
+        public void EndGame(int resolution)
         {
-            //Implementar tela de resultado
+            int resX = resolution * 16 / 9, resY = resolution;
+
+            this.Controls.Clear();
+            GroupBox gpbResult = new GroupBox();
+            Label gpbResultBack = new Label();
+            Label gpbResultBorder = new Label();
+            Label lblResultado = new Label();
+
+            GroupBox[] gpbResultCase = new GroupBox[4] { new GroupBox(), new GroupBox(), new GroupBox(), new GroupBox() };
+            GroupBox[] gpbResultCaseBack = new GroupBox[4] { new GroupBox(), new GroupBox(), new GroupBox(), new GroupBox() };
+            Label[] lblCaseName = new Label[4] { new Label(), new Label(), new Label(), new Label() };
+            Label[] lblTextos = new Label[4] { new Label(), new Label(), new Label(), new Label() };
+
+            gpbResult.Size = new Size((int)(resX * 0.5), (int)(resY * 1));
+            gpbResult.Location = new Point((int)(resX * 0.5 - gpbResult.Size.Width * 0.5), (int)(resY * 0));
+            gpbResult.BackColor = Color.FromArgb(217, 217, 217);
+
+            gpbResultBorder.Parent = gpbResult;
+            gpbResultBorder.Location = new Point(0, 0);
+            gpbResultBorder.Size = new Size(gpbResult.Size.Width, gpbResult.Size.Height);
+            gpbResultBorder.BackColor = Color.FromArgb(228, 87, 87);
+            gpbResultBorder.Text = "";
+
+            gpbResultBack.Location = new Point((int)(gpbResult.Size.Width * 0.0225), (int)(gpbResult.Size.Height * 0.02));
+            gpbResultBack.Size = new Size((int)(gpbResult.Size.Width * 1 - gpbResultBack.Location.X * 2), (int)(gpbResult.Size.Height * 1 - gpbResultBack.Location.Y * 2));
+            gpbResultBack.BackColor = Color.FromArgb(217, 217, 217);
+            gpbResultBack.Text = "";
+
+            lblResultado.Parent = gpbResult;
+            lblResultado.Text = "Resultado final";
+            lblResultado.Font = new Font("Arial", (int)(resolution * 0.05), FontStyle.Bold);
+            lblResultado.BackColor = Color.Transparent;
+            lblResultado.ForeColor = Color.FromArgb(228, 87, 87);
+            lblResultado.AutoSize = true;
+            lblResultado.Location = new Point((int)(gpbResult.Size.Width * 0.5 - lblResultado.Size.Width * 0.5), (int)(gpbResult.Size.Height * 0.05));
+            int j = 0, z = 0; string name = ""; string[] indexesResults = new string[4];
+            for(int i = 0; i < 4; i++)
+            {
+                name = game.results.Name();
+                indexesResults = game.results.IndexesResults();
+
+                gpbResultCase[i].Parent = gpbResultBack;
+                gpbResultCase[i].Location = new Point((int)(gpbResultBack.Size.Width * (j * 0.5)), (int)(gpbResultBack.Size.Height * (0.2 + (z * 0.3))));
+                gpbResultCase[i].Size = new Size((int)(gpbResultBack.Size.Width * 0.5), (int)(gpbResultBack.Size.Height * 0.3));
+                gpbResultCase[i].BackColor = Color.FromArgb(195, 195, 195);
+
+                gpbResultCaseBack[i].Parent = gpbResultCase[i];
+                gpbResultCaseBack[i].Location = new Point(0, 0);
+                gpbResultCaseBack[i].Size = new Size(gpbResultCase[i].Size.Width, gpbResultCase[i].Size.Height);
+                gpbResultCaseBack[i].BackColor = Color.FromArgb(195, 195, 195);
+                gpbResultCaseBack[i].Text = "";
+
+                lblCaseName[i].Parent = gpbResultCaseBack[i];
+                lblCaseName[i].AutoSize = true;
+                lblCaseName[i].Text = $"{name}";
+                lblCaseName[i].Font = new Font("Arial", (int)(resolution * 0.02), FontStyle.Bold);
+                lblCaseName[i].BackColor = Color.FromArgb(195, 195, 195);
+                lblCaseName[i].ForeColor = Color.Black;
+                lblCaseName[i].Location = new Point((int)(gpbResultCase[i].Size.Width * 0.5 - lblCaseName[i].Size.Width * 0.5), (int)(gpbResultCase[i].Size.Height * 0.06));
+                gpbResultCaseBack[i].Controls.Add(lblCaseName[i]);
+
+                lblTextos[i].Parent = gpbResultCaseBack[i];
+                lblTextos[i].AutoSize = true;
+                lblTextos[i].Text = $"Extintores de incêndio = {indexesResults[0]}\nSaídas de emergência = {indexesResults[1]}\nRotas de fuga = {indexesResults[2]}\nAlarmes de incêndio = {indexesResults[3]}";
+                lblTextos[i].Font = new Font("Arial", (int)(resolution * 0.015), FontStyle.Bold);
+                lblTextos[i].BackColor = Color.Transparent;
+                lblTextos[i].ForeColor = Color.Black;
+                lblTextos[i].Location = new Point((int)(gpbResultCase[i].Size.Width * 0.05), (int)(gpbResultCase[i].Size.Height * 0.3));
+                lblTextos[i].TextAlign = ContentAlignment.MiddleRight;
+
+                gpbResultCaseBack[i].Controls.Add(lblTextos[i]);
+
+                gpbResultCase[i].Controls.Add(gpbResultCaseBack[i]);
+                gpbResultBack.Controls.Add(gpbResultCase[i]);
+                if(j==0)
+                    j++;
+                else if (z == 0)
+                {
+                    z++;
+                    j = 0;
+                }
+                
+            }
+
+            gpbResult.Controls.Add(lblResultado);
+            gpbResult.Controls.Add(gpbResultBack);
+            gpbResult.Controls.Add(gpbResultBorder);
+
+            this.Controls.Add(gpbResult);
         }
     }
 }

@@ -55,5 +55,11 @@ namespace game
             lblTimer.Text = $"{this.timer}";
             TimerCounter(lblTimer);
         }
+        public bool End()
+        {
+            if (this.caseNumber > maxNumberOfCases)
+                return true;
+            return false;
+        }
     }
 }

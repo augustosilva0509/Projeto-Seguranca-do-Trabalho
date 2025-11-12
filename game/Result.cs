@@ -36,5 +36,20 @@ namespace game
             this.cases[counter] = new CaseResult(caseProject, errors);
             counter++;
         }
+        public string Name()
+        {
+            return this.cases[counter - 1].caseProject.name;
+        }
+        public string[] IndexesResults()
+        {
+            string[] ret = new string[] {"Certo","Certo","Certo","Certo"};
+            foreach(int index in this.cases[counter - 1].errors)
+            {
+                ret[index] = "Errado";
+            }
+            counter--;
+            return ret;
+        }
+        
     }
 }
