@@ -21,15 +21,17 @@ namespace game
         private static string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
         private int resolution = 720;
         private Game game;
+        private Image menu_bg;
         public Main()
         {
             InitializeComponent();
+            menu_bg = Image.FromFile(projectDirectory + $"\\img\\menu_bg.jpeg");
             this.Size = new Size((int)(resolution * (16/9) * 1.01), (int)(resolution * 1.05));
             this.MaximizeBox = false;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenu();
         }
-        public void ResetForm()
+        public static void ResetForm()
         {
             Form currentForm = Form.ActiveForm;
             if (currentForm == null) return;
@@ -37,9 +39,8 @@ namespace game
             {
                 currentForm.Controls[i].Dispose();
             }
-            this.Cursor = Cursors.Default;
+            currentForm.Cursor = Cursors.Default;
         }
-
         private void RelativeSize(Control component, double x = 1.0, double y = 1.0)
         {
             /***
@@ -54,7 +55,6 @@ namespace game
             y = (y > 1.0) ? 1.0 : y;
             component.Size = new Size((int)(component.Parent.Size.Width * x), (int)(component.Parent.Size.Height * y));
         }
-
         private void RelativeLocation(Control component, double x = 0.0, double y = 0.0)
         {
             /***
@@ -84,29 +84,54 @@ namespace game
         {
             this.Controls.Clear();
             this.Size = new Size((int)(resolution * 16/9 * 1.01), (int)(resolution * 1.05));
+
+            Panel pnlMenu = new Panel();
+            
             Label lblMenuTitle = new Label();
+            Label lblMenuTitleBorder = new Label();
             Label lblMenuStart = new Label();
+            Label lblMenuStartBorder = new Label();
             Label lblMenuHowToPlay = new Label();
             Label lblMenuExit = new Label();
-            
 
-            lblMenuTitle.Parent = this;
+            PictureBox pictMenuBg = new PictureBox();
+            pictMenuBg.Parent = this;
+            pictMenuBg.Name = "pictMenuBg";
+            RelativeSize(pictMenuBg);
+            RelativeLocation(pictMenuBg, 0.5, 0.5);
+
+            pnlMenu.Parent = pictMenuBg;
+            RelativeSize(pnlMenu);
+            RelativeLocation(pnlMenu,0.5,0.5);
+            pnlMenu.BackColor = Color.Transparent;
+
+            lblMenuTitleBorder.Parent = pnlMenu;
+            lblMenuTitleBorder.Text = "Guardiões das Regras";
+            lblMenuTitleBorder.Font = new Font("Arial", (int)(pnlMenu.Size.Height * 0.100), FontStyle.Bold);
+            lblMenuTitleBorder.AutoSize = true;
+            RelativeLocation(lblMenuTitleBorder, 0.5, 0.18); //0.5,033
+            lblMenuTitleBorder.ForeColor = Color.Black;
+            lblMenuTitleBorder.BackColor = Color.Transparent;
+            lblMenuTitleBorder.Visible = true;
+            lblMenuTitleBorder.Enabled = true;
+
+            lblMenuTitle.Parent = lblMenuTitleBorder;
             lblMenuTitle.Text = "Guardiões das Regras";
-            lblMenuTitle.Font = new Font("Arial", (int)(resolution * 0.07), FontStyle.Bold);
+            lblMenuTitle.Font = new Font("Arial", (int)(pnlMenu.Size.Height * 0.098), FontStyle.Bold);
             lblMenuTitle.AutoSize = true;
-            RelativeLocation(lblMenuTitle, 0.5, 0.15);
-            lblMenuTitle.ForeColor = Color.FromArgb(228, 87, 87);
+            RelativeLocation(lblMenuTitle, 0.5, 0.5);
+            lblMenuTitle.ForeColor = Color.FromArgb(238, 25, 25);
             lblMenuTitle.BackColor = Color.Transparent;
             lblMenuTitle.Visible = true;
             lblMenuTitle.Enabled = true;
 
-            lblMenuStart.Parent = this;
+            lblMenuStart.Parent = pnlMenu;
             lblMenuStart.Name = "Start";
             lblMenuStart.Text = "Iniciar";
-            lblMenuStart.Font = new Font("Arial", (int)(resolution * 0.04), FontStyle.Bold);
+            lblMenuStart.Font = new Font("Arial", (int)(pnlMenu.Size.Height * 0.04), FontStyle.Bold);
             lblMenuStart.AutoSize = true;
-            RelativeLocation(lblMenuStart, 0.5, 0.45);
-            lblMenuStart.ForeColor = Color.FromArgb(228, 87, 87);
+            RelativeLocation(lblMenuStart, 0.225, 0.45); //0.5,0.45
+            lblMenuStart.ForeColor = Color.FromArgb(238, 60, 60);
             lblMenuStart.BackColor = Color.Transparent;
             lblMenuStart.MouseEnter += LabelMenu_MouseEnter;
             lblMenuStart.MouseLeave += LabelMenu_MouseLeave;
@@ -114,13 +139,13 @@ namespace game
             lblMenuStart.Visible = true;
             lblMenuStart.Enabled = true;
 
-            lblMenuHowToPlay.Parent = this;
+            lblMenuHowToPlay.Parent = pnlMenu;
             lblMenuHowToPlay.Name = "HowToPlay";
             lblMenuHowToPlay.Text = "Como Jogar";
-            lblMenuHowToPlay.Font = new Font("Arial", (int)(resolution * 0.04), FontStyle.Bold);
+            lblMenuHowToPlay.Font = new Font("Arial", (int)(pnlMenu.Size.Height * 0.04), FontStyle.Bold);
             lblMenuHowToPlay.AutoSize = true;
-            RelativeLocation(lblMenuHowToPlay, 0.5, 0.55);
-            lblMenuHowToPlay.ForeColor = Color.FromArgb(228, 87, 87);
+            RelativeLocation(lblMenuHowToPlay, 0.225, 0.52); //0.5,0.55
+            lblMenuHowToPlay.ForeColor = Color.FromArgb(238, 60, 60);
             lblMenuHowToPlay.BackColor = Color.Transparent;
             lblMenuHowToPlay.MouseEnter += LabelMenu_MouseEnter;
             lblMenuHowToPlay.MouseLeave += LabelMenu_MouseLeave;
@@ -128,26 +153,48 @@ namespace game
             lblMenuHowToPlay.Visible = true;
             lblMenuHowToPlay.Enabled = true;
 
-            lblMenuExit.Parent = this;
+            lblMenuExit.Parent = pnlMenu;
             lblMenuExit.Name = "Exit";
             lblMenuExit.Text = "Sair";
-            lblMenuExit.Font = new Font("Arial", (int)(resolution * 0.04), FontStyle.Bold);
+            lblMenuExit.Font = new Font("Arial", (int)(pnlMenu.Size.Height * 0.04), FontStyle.Bold);
             lblMenuExit.AutoSize = true;
-            RelativeLocation(lblMenuExit, 0.5, 0.65);
-            lblMenuExit.ForeColor = Color.FromArgb(228, 87, 87);
+            RelativeLocation(lblMenuExit, 0.225, 0.59); // 0.5,0.65
+            lblMenuExit.ForeColor = Color.FromArgb(238, 60, 60);
             lblMenuExit.BackColor = Color.Transparent;
             lblMenuExit.MouseEnter += LabelMenu_MouseEnter;
             lblMenuExit.MouseLeave += LabelMenu_MouseLeave;
             lblMenuExit.MouseClick += MenuExit_MouseClick;
             lblMenuExit.Visible = true;
             lblMenuExit.Enabled = true;
+
+            lblMenuTitleBorder.Controls.Add(lblMenuTitle);
+
+            pnlMenu.Controls.Add(lblMenuExit);
+            pnlMenu.Controls.Add(lblMenuHowToPlay);
+            pnlMenu.Controls.Add(lblMenuStart);
+            pnlMenu.Controls.Add(lblMenuTitleBorder);
+
+            pictMenuBg.Controls.Add(pnlMenu);
+
+            this.Controls.Add(pictMenuBg);
+
+            pictMenuBg.Image = menu_bg;
+            ResumeLayout(false);
         }
         private void MenuStart_MouseClick(object sender, MouseEventArgs e)
         {
+            Form currentForm = Form.ActiveForm;
+            if (currentForm == null) return;
+            PictureBox a = currentForm.Controls.Find("pictMenuBg", false).First() as PictureBox;
+            a.Image = null;
             MainGame();
         }
         private void MenuHowToPlay_MouseClick(object sender, MouseEventArgs e)
         {
+            Form currentForm = Form.ActiveForm;
+            if (currentForm == null) return;
+            PictureBox a = currentForm.Controls.Find("pictMenuBg", false).First() as PictureBox;
+            a.Image = null;
             HowToPlay();
         }
         private void MenuExit_MouseClick(object sender, MouseEventArgs e)
@@ -157,43 +204,15 @@ namespace game
         private void LabelMenu_MouseEnter(object sender, EventArgs e)
         {
             Label lblSender = sender as Label;
-            lblSender.ForeColor = Color.FromArgb(226, 38, 38);
-            lblSender.Font = new Font(lblSender.Font.FontFamily, (int)(lblSender.Font.Size * 1.5), lblSender.Font.Style);
-            switch (lblSender.Name)
-            {
-                case "Start":
-                    RelativeLocation(lblSender, 0.5, 0.45);
-                    break;
-                case "HowToPlay":
-                    RelativeLocation(lblSender, 0.5, 0.55);
-                    break;
-                case "Exit":
-                    RelativeLocation(lblSender, 0.5, 0.65);
-                    break;
-                default:
-                    break;
-            }
+            lblSender.BackColor = Color.Transparent;
+            lblSender.ForeColor = Color.FromArgb(243, 25, 25);
             this.Cursor = Cursors.Hand;
         }
         private void LabelMenu_MouseLeave(object sender, EventArgs e)
         {
             Label lblSender = sender as Label;
-            lblSender.ForeColor = Color.FromArgb(228, 87, 87);
-            lblSender.Font = new Font(lblSender.Font.FontFamily, (int)(lblSender.Font.Size / 1.5), lblSender.Font.Style);
-            switch (lblSender.Name)
-            {
-                case "Start":
-                    RelativeLocation(lblSender, 0.5, 0.45);
-                    break;
-                case "HowToPlay":
-                    RelativeLocation(lblSender, 0.5, 0.55);
-                    break;
-                case "Exit":
-                    RelativeLocation(lblSender, 0.5, 0.65);
-                    break;
-                default:
-                    break;
-            }
+            lblSender.BackColor = Color.Transparent;
+            lblSender.ForeColor = Color.FromArgb(238, 60, 60);
             this.Cursor = Cursors.Default;
         }
 
@@ -204,6 +223,7 @@ namespace game
         }
         private void SetHowToPlay(int resolution)
         {
+            
             Panel pnlGameFog = new Panel();
             Panel pnlHowToPlay = new Panel();
             Label pnlHowToPlayBorder = new Label();
@@ -211,6 +231,8 @@ namespace game
             Label lblHowToPlayTitle = new Label();
             Label lblHowToPlayText = new Label();
             Button btnHowToPlayBack = new Button();
+
+            
 
             pnlGameFog.Parent = this;
             RelativeSize(pnlGameFog);
@@ -289,7 +311,8 @@ namespace game
             SetGameDesign(resolution);
             UpdateMainGame();
             ProjectStateCheck();
-        }private void SetGameDesign(int resolution)
+        }
+        private void SetGameDesign(int resolution)
         {
             double resX = resolution * 16 / 9, resY = resolution;
 
