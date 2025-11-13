@@ -45,6 +45,10 @@ namespace game
 
             return checkedIndices.ToArray<int>();
         }
+        public void EndTimer()
+        {
+            this.timer = -1;
+        }
         private async void TimerCounter(Label lblTimer)
         {
             if (this.timer == 0)
@@ -52,8 +56,12 @@ namespace game
                 MessageBox.Show("Tempo esgotado!");
                 Application.Exit();
             }
+            else if(this.timer < 0)
+            {
+                return;
+            }
 
-            await Task.Delay(1000);
+                await Task.Delay(1000);
             this.timer--;
             lblTimer.Text = $"{this.timer}";
             TimerCounter(lblTimer);
