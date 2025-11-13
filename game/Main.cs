@@ -24,6 +24,9 @@ namespace game
         public Main()
         {
             InitializeComponent();
+            this.Size = new Size((int)(resolution * (16/9) * 1.01), (int)(resolution * 1.05));
+            this.MaximizeBox = false;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenu();
         }
         public void ResetForm()
@@ -32,11 +35,11 @@ namespace game
             if (currentForm == null) return;
             for (int i = currentForm.Controls.Count-1; i >= 0; i--)
             {
-                currentForm.Controls[i].Enabled = false;
-                currentForm.Controls[i].Visible = false;
+                currentForm.Controls[i].Dispose();
             }
             this.Cursor = Cursors.Default;
         }
+
         private void RelativeSize(Control component, double x = 1.0, double y = 1.0)
         {
             /***
@@ -51,6 +54,7 @@ namespace game
             y = (y > 1.0) ? 1.0 : y;
             component.Size = new Size((int)(component.Parent.Size.Width * x), (int)(component.Parent.Size.Height * y));
         }
+
         private void RelativeLocation(Control component, double x = 0.0, double y = 0.0)
         {
             /***
@@ -68,6 +72,7 @@ namespace game
                 (int)(component.Parent.Size.Height * y - component.Size.Height * 0.5)
                 );
         }
+
         #region MainMenu
         private void MainMenu()
         {
@@ -79,16 +84,14 @@ namespace game
         {
             this.Controls.Clear();
             this.Size = new Size((int)(resolution * 16/9 * 1.01), (int)(resolution * 1.05));
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
             Label lblMenuTitle = new Label();
             Label lblMenuStart = new Label();
             Label lblMenuHowToPlay = new Label();
             Label lblMenuExit = new Label();
-            CancellationTokenSource cts = new CancellationTokenSource();
-            CancellationToken token = cts.Token;
+            
 
             lblMenuTitle.Parent = this;
-            lblMenuTitle.Text = "Guardiões das Plantas";
+            lblMenuTitle.Text = "Guardiões das Regras";
             lblMenuTitle.Font = new Font("Arial", (int)(resolution * 0.07), FontStyle.Bold);
             lblMenuTitle.AutoSize = true;
             RelativeLocation(lblMenuTitle, 0.5, 0.15);
@@ -145,8 +148,7 @@ namespace game
         }
         private void MenuHowToPlay_MouseClick(object sender, MouseEventArgs e)
         {
-            //implementar
-            MessageBox.Show("Falta implementar!");
+            HowToPlay();
         }
         private void MenuExit_MouseClick(object sender, MouseEventArgs e)
         {
@@ -155,7 +157,7 @@ namespace game
         private void LabelMenu_MouseEnter(object sender, EventArgs e)
         {
             Label lblSender = sender as Label;
-            lblSender.ForeColor = Color.FromArgb(226,38,38);
+            lblSender.ForeColor = Color.FromArgb(226, 38, 38);
             lblSender.Font = new Font(lblSender.Font.FontFamily, (int)(lblSender.Font.Size * 1.5), lblSender.Font.Style);
             switch (lblSender.Name)
             {
@@ -194,7 +196,91 @@ namespace game
             }
             this.Cursor = Cursors.Default;
         }
+
+        private void HowToPlay()
+        {
+            ResetForm();
+            SetHowToPlay(resolution);
+        }
+        private void SetHowToPlay(int resolution)
+        {
+            Panel pnlGameFog = new Panel();
+            Panel pnlHowToPlay = new Panel();
+            Label pnlHowToPlayBorder = new Label();
+            Label pnlHowToPlayBack = new Label();
+            Label lblHowToPlayTitle = new Label();
+            Label lblHowToPlayText = new Label();
+            Button btnHowToPlayBack = new Button();
+
+            pnlGameFog.Parent = this;
+            RelativeSize(pnlGameFog);
+            RelativeLocation(pnlGameFog, 0.5, 0.5);
+            pnlGameFog.BackColor = Color.FromArgb(160, 160, 160);
+
+            pnlHowToPlay.Parent = this;
+            RelativeSize(pnlHowToPlay, 0.5, 0.7);
+            RelativeLocation(pnlHowToPlay, 0.5, 0.5);
+            pnlHowToPlay.BackColor = Color.Transparent;
+
+            pnlHowToPlayBorder.Parent = pnlHowToPlay;
+            pnlHowToPlayBorder.Text = "";
+            pnlHowToPlayBorder.AutoSize = false;
+            RelativeSize(pnlHowToPlayBorder);
+            RelativeLocation(pnlHowToPlayBorder, 0.5, 0.5);
+            pnlHowToPlayBorder.BackColor = Color.FromArgb(228, 87, 87);
+
+            pnlHowToPlayBack.Parent = pnlHowToPlay;
+            pnlHowToPlayBack.Text = "";
+            pnlHowToPlayBack.AutoSize = false;
+            RelativeSize(pnlHowToPlayBack, 0.95 * (16 / 9), 0.95);
+            RelativeLocation(pnlHowToPlayBack, 0.5, 0.5);
+            pnlHowToPlayBack.BackColor = Color.FromArgb(217, 217, 217);
+
+            lblHowToPlayTitle.Parent = pnlHowToPlay;
+            lblHowToPlayTitle.Font = new Font("Arial", (int)(pnlHowToPlay.Size.Height * 0.09), FontStyle.Bold);
+            lblHowToPlayTitle.Text = "Como jogar";
+            lblHowToPlayTitle.AutoSize = true;
+            lblHowToPlayTitle.BackColor = Color.FromArgb(217, 217, 217);
+            lblHowToPlayTitle.ForeColor = Color.FromArgb(228, 87, 87);
+            RelativeLocation(lblHowToPlayTitle, 0.5, 0.13);
+
+            lblHowToPlayText.Parent = pnlHowToPlay;
+            lblHowToPlayText.Font = new Font("Arial", (int)(pnlHowToPlay.Size.Height * 0.02), FontStyle.Bold);
+            lblHowToPlayText.Text = "" +
+                "Um jogador estará com o Manual do Guardião das Regras em mãos, e os outros\njogadores estarão vendo os casos.\r\n\r\n" +
+                "Um não deve conseguir ver o que o outro está fazendo!\r\n\r\nEm cada caso será dada uma planta arquitetônica e algumas informações extras\nsobre a planta em questão. Também, à direita, serão dadas quatro opções, que\nsão elas: \"Extintores de incêndio\", \"Saídas de emergência\", \"Rotas de fuga\" e\n\"Alarmes de incêndio\"." +
+                "\r\n\r\nVocê deverá marcar essas opções de acordo com as regras do Manual do\nGuardião das Regras, que estará sendo lido pelo seu companheiro de equipe.\r\n\r\nVocês terão trinta segundos para resolver cada caso, que se não responderem à\ntempo será entregue o que já fizeram. Portanto, comunicação objetiva e\neficiente é essencial!";
+            lblHowToPlayText.AutoSize = true;
+            lblHowToPlayText.BackColor = Color.FromArgb(217, 217, 217);
+            lblHowToPlayText.ForeColor = Color.FromArgb(228, 100, 100);
+            RelativeLocation(lblHowToPlayText, 0.5, 0.5);
+
+            btnHowToPlayBack.Parent = pnlHowToPlay;
+            btnHowToPlayBack.Font = new Font("Arial", (float)(pnlHowToPlay.Size.Height * 0.025), FontStyle.Bold);
+            btnHowToPlayBack.Text = "Voltar";
+            btnHowToPlayBack.BackColor = Color.FromArgb(107, 200, 118);
+            btnHowToPlayBack.FlatStyle = FlatStyle.Flat;
+            btnHowToPlayBack.FlatAppearance.BorderSize = 0;
+            btnHowToPlayBack.ForeColor = Color.Black;
+            btnHowToPlayBack.Click += HowToPlayBack_Click;
+            RelativeSize(btnHowToPlayBack, 0.6, 0.11);
+            RelativeLocation(btnHowToPlayBack, 0.5, 0.9);
+
+            pnlHowToPlay.Controls.Add(btnHowToPlayBack);
+            pnlHowToPlay.Controls.Add(lblHowToPlayText);
+            pnlHowToPlay.Controls.Add(lblHowToPlayTitle);
+            pnlHowToPlay.Controls.Add(pnlHowToPlayBack);
+            pnlHowToPlay.Controls.Add(pnlHowToPlayBorder);
+
+            pnlGameFog.Controls.Add(pnlHowToPlay);
+            this.Controls.Add(pnlGameFog);
+        }
+        private void HowToPlayBack_Click(object sender, EventArgs e)
+        {
+            MainMenu();
+        }
         #endregion
+
         #region MainGame
         private void MainGame()
         {
@@ -203,12 +289,9 @@ namespace game
             SetGameDesign(resolution);
             UpdateMainGame();
             ProjectStateCheck();
-        }
-        private void SetGameDesign(int resolution)
+        }private void SetGameDesign(int resolution)
         {
             double resX = resolution * 16 / 9, resY = resolution;
-            this.Size = new Size((int)(resX * 1.01), (int)(resY * 1.05));
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             #region Game Header
             #region gHeader
@@ -418,6 +501,7 @@ namespace game
             }
         }
         #endregion
+
         #region GameResults
         private void GameResults()
         {
@@ -428,32 +512,40 @@ namespace game
             int resX = resolution * 16 / 9, resY = resolution;
 
             this.Controls.Clear();
+            Panel pnlGameFog = new Panel();
             GroupBox gpbResult = new GroupBox();
             Label gpbResultBack = new Label();
             Label gpbResultBorder = new Label();
             Label lblResultado = new Label();
 
-            Panel[] gpbResultCase = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
-            Panel[] gpbResultCaseBorder = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
-            Panel[] gpbResultCaseBack = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
+            Panel[] pnlResultCase = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
+            Panel[] pnlResultCaseBorder = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
+            Panel[] pnlResultCaseBack = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
             Label[] lblCaseName = new Label[4] { new Label(), new Label(), new Label(), new Label() };
             Label[] lblTextos = new Label[4] { new Label(), new Label(), new Label(), new Label() };
             Button btnBack = new Button();
 
-            gpbResult.Parent = this;
+            pnlGameFog.Parent = this;
+            RelativeSize(pnlGameFog);
+            RelativeLocation(pnlGameFog, 0.5,0.5);
+            pnlGameFog.BackColor = Color.FromArgb(160, 160, 160);
+
+            gpbResult.Parent = pnlGameFog;
             RelativeSize(gpbResult,0.6,0.9);
-            gpbResult.Location = new Point((int)(resX * 0.5 - gpbResult.Size.Width * 0.5), (int)(resY * 0.5 - gpbResult.Size.Height * 0.5));
-            //RelativeLocation(gpbResult, 0.5, 0.5);
+            RelativeLocation(gpbResult, 0.5, 0.475);
             gpbResult.BackColor = Color.FromArgb(217, 217, 217);
 
             gpbResultBorder.Parent = gpbResult;
-            gpbResultBorder.Location = new Point(0, 0);
-            gpbResultBorder.Size = new Size(gpbResult.Size.Width, gpbResult.Size.Height);
+            gpbResultBorder.AutoSize = false;
+            RelativeSize(gpbResultBorder);
+            RelativeLocation(gpbResultBorder, 0.5, 0.5);
             gpbResultBorder.BackColor = Color.FromArgb(228, 87, 87);
             gpbResultBorder.Text = "";
 
-            gpbResultBack.Location = new Point((int)(gpbResult.Size.Width * 0.015*(16/9*0.6)), (int)(gpbResult.Size.Height * 0.015 * 0.9));
-            gpbResultBack.Size = new Size((int)(gpbResult.Size.Width * 1 - gpbResultBack.Location.X * 2), (int)(gpbResult.Size.Height * 1 - gpbResultBack.Location.Y * 2));
+            gpbResultBack.Parent = gpbResult;
+            gpbResultBack.AutoSize = false;
+            RelativeSize(gpbResultBack, 0.95 * (16 / 9), 0.95);
+            RelativeLocation(gpbResultBack, 0.5, 0.5);
             gpbResultBack.BackColor = Color.FromArgb(217, 217, 217);
             gpbResultBack.Text = "";
 
@@ -470,35 +562,35 @@ namespace game
                 name = game.results.Name();
                 indexesResults = game.results.IndexesResults();
 
-                gpbResultCase[i].Parent = gpbResultBack;
-                gpbResultCase[i].Location = new Point((int)(j), (int)(gpbResultBack.Size.Height * 0.2 + z));
-                RelativeSize(gpbResultCase[i], 0.5, 0.3);
-                gpbResultCase[i].BackColor = Color.FromArgb(217, 217, 217);
+                pnlResultCase[i].Parent = gpbResultBack;
+                pnlResultCase[i].Location = new Point((int)(j), (int)(gpbResultBack.Size.Height * 0.2 + z));
+                RelativeSize(pnlResultCase[i], 0.5, 0.3);
+                pnlResultCase[i].BackColor = Color.FromArgb(217, 217, 217);
 
-                gpbResultCaseBorder[i].Parent = gpbResultCase[i];
-                gpbResultCaseBorder[i].Location = new Point(0, 0);
-                RelativeSize(gpbResultCaseBorder[i]);
-                gpbResultCaseBorder[i].BackColor = Color.FromArgb(210, 210, 210);
-                gpbResultCaseBorder[i].Text = "";
-                gpbResultCaseBorder[i].Visible = false;
+                pnlResultCaseBorder[i].Parent = pnlResultCase[i];
+                pnlResultCaseBorder[i].Location = new Point(0, 0);
+                RelativeSize(pnlResultCaseBorder[i]);
+                pnlResultCaseBorder[i].BackColor = Color.FromArgb(210, 210, 210);
+                pnlResultCaseBorder[i].Text = "";
+                pnlResultCaseBorder[i].Visible = false;
 
-                gpbResultCaseBack[i].Parent = gpbResultCase[i];
-                gpbResultCaseBack[i].Location = new Point(0, 0);
-                RelativeSize(gpbResultCaseBack[i], 0.98, 0.95);
-                RelativeLocation(gpbResultCaseBack[i], 0.5, 0.5);
-                gpbResultCaseBack[i].BackColor = Color.FromArgb(217, 217, 217);
-                gpbResultCaseBack[i].Text = "";
+                pnlResultCaseBack[i].Parent = pnlResultCase[i];
+                pnlResultCaseBack[i].Location = new Point(0, 0);
+                RelativeSize(pnlResultCaseBack[i], 0.98, 0.95);
+                RelativeLocation(pnlResultCaseBack[i], 0.5, 0.5);
+                pnlResultCaseBack[i].BackColor = Color.FromArgb(217, 217, 217);
+                pnlResultCaseBack[i].Text = "";
 
-                lblCaseName[i].Parent = gpbResultCaseBack[i];
+                lblCaseName[i].Parent = pnlResultCaseBack[i];
                 lblCaseName[i].AutoSize = true;
                 lblCaseName[i].Text = $"{name}";
                 lblCaseName[i].Font = new Font("Arial", (int)(resolution * 0.02), FontStyle.Bold);
                 lblCaseName[i].BackColor = Color.Transparent;
                 lblCaseName[i].ForeColor = Color.Black;
-                lblCaseName[i].Location = new Point((int)(gpbResultCase[i].Size.Width * 0.5 - lblCaseName[i].Size.Width * 0.5), (int)(gpbResultCase[i].Size.Height * 0.1));
-                gpbResultCaseBack[i].Controls.Add(lblCaseName[i]);
+                lblCaseName[i].Location = new Point((int)(pnlResultCase[i].Size.Width * 0.5 - lblCaseName[i].Size.Width * 0.5), (int)(pnlResultCase[i].Size.Height * 0.1));
+                pnlResultCaseBack[i].Controls.Add(lblCaseName[i]);
 
-                lblTextos[i].Parent = gpbResultCaseBack[i];
+                lblTextos[i].Parent = pnlResultCaseBack[i];
                 lblTextos[i].AutoSize = true;
                 lblTextos[i].Text = $"Extintores de incêndio: {indexesResults[0]}\nSaídas de emergência: {indexesResults[1]}\nRotas de fuga: {indexesResults[2]}\nAlarmes de incêndio: {indexesResults[3]}";
                 lblTextos[i].Font = new Font("Arial", (int)(resolution * 0.015), FontStyle.Bold);
@@ -506,16 +598,16 @@ namespace game
                 lblTextos[i].ForeColor = Color.Black;
                 RelativeLocation(lblTextos[i],0.5,0.5);
                 lblTextos[i].TextAlign = ContentAlignment.MiddleCenter;
-                gpbResultCaseBack[i].Controls.Add(lblTextos[i]);
+                pnlResultCaseBack[i].Controls.Add(lblTextos[i]);
 
-                gpbResultCase[i].Controls.Add(gpbResultCaseBack[i]);
-                gpbResultCase[i].Controls.Add(gpbResultCaseBorder[i]);
-                gpbResultBack.Controls.Add(gpbResultCase[i]);
+                pnlResultCase[i].Controls.Add(pnlResultCaseBack[i]);
+                pnlResultCase[i].Controls.Add(pnlResultCaseBorder[i]);
+                gpbResultBack.Controls.Add(pnlResultCase[i]);
                 if(j==0)
-                    j = gpbResultCase[i].Size.Width;
+                    j = pnlResultCase[i].Size.Width;
                 else if (z == 0)
                 {
-                    z = gpbResultCase[i].Size.Height;
+                    z = pnlResultCase[i].Size.Height;
                     j = 0;
                 }
             }
@@ -536,7 +628,8 @@ namespace game
             gpbResult.Controls.Add(gpbResultBack);
             gpbResult.Controls.Add(gpbResultBorder);
 
-            this.Controls.Add(gpbResult);
+            pnlGameFog.Controls.Add(gpbResult);
+            this.Controls.Add(pnlGameFog);
         }
 
         private void ResultBack_Click(object sender, EventArgs e)
