@@ -238,12 +238,12 @@ namespace game
 
                 gpbResultCase[i].Parent = gpbResultBack;
                 gpbResultCase[i].Location = new Point((int)(j), (int)(gpbResultBack.Size.Height * 0.2 + z));
-                gpbResultCase[i].Size = new Size((int)(gpbResultBack.Size.Width * 0.5), (int)(gpbResultBack.Size.Height * 0.3));
+                RelativeSize(gpbResultCase[i], 0.5, 0.3);
                 gpbResultCase[i].BackColor = Color.FromArgb(217, 217, 217);
 
                 gpbResultCaseBack[i].Parent = gpbResultCase[i];
                 gpbResultCaseBack[i].Location = new Point(0, 0);
-                gpbResultCaseBack[i].Size = new Size(gpbResultCase[i].Size.Width, gpbResultCase[i].Size.Height);
+                RelativeSize(gpbResultCaseBack[i]);
                 gpbResultCaseBack[i].BackColor = Color.FromArgb(205, 205, 205);
                 gpbResultCaseBack[i].Text = "";
 
@@ -281,6 +281,20 @@ namespace game
             gpbResult.Controls.Add(gpbResultBorder);
 
             this.Controls.Add(gpbResult);
+        }
+        private void RelativeSize(Control component, double x = 1.0, double y = 1.0)
+        {
+            /***
+            Redimensiona o componente relativamente ao tamanho do seu componente pai.
+            
+            Entradas:
+                component: componente a ser redimensionado;
+                x : valor relativo a largura do componente pai (ex.: x = 1.00, temos 100% da largura do pai);
+                y : valor relativo a altura do componente pai (ex.: y = 0.50, temos 50% da altura do pai);
+            ***/
+            x = (x > 1.0) ? 1.0 : x;
+            y = (y > 1.0) ? 1.0 : y;
+            component.Size = new Size((int)(component.Parent.Size.Width * x), (int)(component.Parent.Size.Height * y));
         }
     }
 }
