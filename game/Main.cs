@@ -22,6 +22,14 @@ namespace game
         private int resolution = 720;
         private Game game;
         private Image menu_bg;
+        private enum AnchorPos
+        {
+            Center,
+            TopLeft,
+            TopRight,
+            BottomLeft,
+            BottomRight
+        }
         public Main()
         {
             InitializeComponent();
@@ -41,6 +49,13 @@ namespace game
             }
             currentForm.Cursor = Cursors.Default;
         }
+        private Control GetComponent(string name)
+        {
+            Form currentForm = Form.ActiveForm;
+            if (currentForm == null) return null;
+            if (currentForm.Controls.Find(name, true).Count() == 0) return null;
+            return currentForm.Controls.Find(name, true).First();
+        }
         private void RelativeSize(Control component, double x = 1.0, double y = 1.0)
         {
             /***
@@ -55,22 +70,52 @@ namespace game
             y = (y > 1.0) ? 1.0 : y;
             component.Size = new Size((int)(component.Parent.Size.Width * x), (int)(component.Parent.Size.Height * y));
         }
-        private void RelativeLocation(Control component, double x = 0.0, double y = 0.0)
+        private void RelativeLocation(Control component, double x = 0.5, double y = 0.5, AnchorPos anchor = AnchorPos.Center)
         {
             /***
-            Posiciona o ponto médio do componente relativamente ao tamanho do seu componente pai. 
+            Posiciona o ponto de ancora do componente relativamente ao tamanho do seu componente pai. 
             
             Entradas:
                 component: componente a ser posicionado;
+                anchor: ponto que ser� usado como ancora para o posicionamento;
                 x : valor relativo a largura do componente pai (ex.: x = 1.00, temos 100% da largura do pai);
                 y : valor relativo a altura do componente pai (ex.: y = 0.50, temos 50% da altura do pai);
             ***/
             x = (x > 1.0) ? 1.0 : x;
             y = (y > 1.0) ? 1.0 : y;
-            component.Location = new Point(
-                (int)(component.Parent.Size.Width * x - component.Size.Width * 0.5), 
-                (int)(component.Parent.Size.Height * y - component.Size.Height * 0.5)
-                );
+            switch (anchor)
+            {
+                case AnchorPos.Center:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x - component.Size.Width * 0.5),
+                        (int)(component.Parent.Size.Height * y - component.Size.Height * 0.5)
+                        );
+                    break;
+                case AnchorPos.TopLeft:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x),
+                        (int)(component.Parent.Size.Height * y)
+                        );
+                    break;
+                case AnchorPos.TopRight:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x + component.Size.Width),
+                        (int)(component.Parent.Size.Height * y)
+                        );
+                    break;
+                case AnchorPos.BottomLeft:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x),
+                        (int)(component.Parent.Size.Height * y + component.Size.Height)
+                        );
+                    break;
+                case AnchorPos.BottomRight:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x + component.Size.Width),
+                        (int)(component.Parent.Size.Height * y + component.Size.Height)
+                        );
+                    break;
+            }
         }
 
         #region MainMenu
@@ -307,215 +352,275 @@ namespace game
         private void MainGame()
         {
             ResetForm();
-            game = new Game(30, gTimerLbl);
             SetGameDesign(resolution);
+            Label lblTimer = GetComponent("lblDynamicHeaderTimer") as Label;
+            if (lblTimer == null) return;
+            game = new Game(30, lblTimer);
             UpdateMainGame();
-            ProjectStateCheck();
         }
         private void SetGameDesign(int resolution)
         {
-            double resX = resolution * 16 / 9, resY = resolution;
+            #region pnlHeader
+            Panel pnlHeader = new Panel();
+            Label pnlHeaderBack = new Label();
+            Label pnlHeaderTitle = new Label();
+            PictureBox pictHeaderTimer = new PictureBox();
+            Label lblStaticHeaderTimer = new Label();
+            Label lblDynamicHeaderTimer = new Label();
+            pnlHeader.Parent = this;
+            RelativeSize(pnlHeader, 1, 0.15);
+            RelativeLocation(pnlHeader, 0.5, 0.075);
 
-            #region Game Header
-            #region gHeader
-            gHeader.Size = new Size((int)(resX * 1.00), (int)(resY * 0.15));
-            gHeader.Location = new Point(0, 0);
-            gHeader.Enabled = true;
-            gHeader.Visible = true;
+            pnlHeaderBack.Parent = pnlHeader;
+            RelativeSize(pnlHeaderBack);
+            RelativeLocation(pnlHeaderBack);
+            pnlHeaderBack.BackColor = Color.FromArgb(228, 87, 87);
 
-            gHeaderBack.Size = new Size((int)(resX * 1.00), (int)(resY * 0.15));
-            gHeaderBack.Location = new Point(0, 0);
-            gHeaderBack.Text = "";
-            gHeaderBack.BackColor = Color.FromArgb(228, 87, 87);
-            gHeaderBack.Enabled = true;
-            gHeaderBack.Visible = true;
-            #endregion
-            #region gTitle
-            gHeaderTitle.Parent = gHeaderBack;
-            gHeaderTitle.Size = new Size((int)(resX * 0.52), (int)(resY * 0.15));
-            gHeaderTitle.Location = new Point((int)(resX * 0.08), 0);
-            gHeaderTitle.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
-            gHeaderTitle.BackColor = Color.Transparent;
-            gHeaderTitle.ForeColor = Color.White;
-            gHeaderTitle.TextAlign = ContentAlignment.MiddleLeft;
-            gHeaderTitle.Enabled = true;
-            gHeaderTitle.Visible = true;
-            #endregion
-            #region gTimer
-            gTimerPict.Parent = gHeaderBack;
-            gTimerPict.Size = new Size((int)(resX * 0.08), (int)(resY * 0.15));
-            gTimerPict.Location = new Point((int)(resX * 0.7), 0);
-            gTimerPict.Image = Image.FromFile(projectDirectory + "\\img\\hourglass.png");
-            gTimerPict.SizeMode = PictureBoxSizeMode.StretchImage;
-            gTimerPict.Enabled = true;
-            gTimerPict.Visible = true;
+            pnlHeaderTitle.Text = "";
+            pnlHeaderTitle.Name = "pnlHeaderTitle";
+            pnlHeaderTitle.AutoSize = false;
+            pnlHeaderTitle.Parent = pnlHeaderBack;
+            pnlHeaderTitle.AutoSize = false;
+            RelativeSize(pnlHeaderTitle, 0.52, 1);
+            RelativeLocation(pnlHeaderTitle, 0.34, 0.5);
+            pnlHeaderTitle.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
+            pnlHeaderTitle.BackColor = Color.Transparent;
+            pnlHeaderTitle.ForeColor = Color.White;
+            pnlHeaderTitle.TextAlign = ContentAlignment.MiddleLeft;
 
-            gTimerLbl2.Parent = gHeaderBack;
-            gTimerLbl2.Size = new Size((int)(resX * 0.05), (int)(resY * 0.12));
-            gTimerLbl2.Location = new Point((int)(resX * 0.846), 0);
-            gTimerLbl2.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
-            gTimerLbl2.TextAlign = ContentAlignment.BottomLeft;
-            gTimerLbl2.BackColor = Color.Transparent;
-            gTimerLbl2.ForeColor = Color.White;
-            gTimerLbl2.Text = $"/{game.maxTimer}";
-            gTimerLbl2.Enabled = true;
-            gTimerLbl2.Visible = true;
+            pictHeaderTimer.Parent = pnlHeaderBack;
+            RelativeSize(pictHeaderTimer, 0.08, 1);
+            RelativeLocation(pictHeaderTimer, 0.74, 0.5);
+            pictHeaderTimer.Image = Image.FromFile(projectDirectory + "\\img\\hourglass.png");
+            pictHeaderTimer.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            gTimerLbl.Parent = gHeaderBack;
-            gTimerLbl.Size = new Size((int)(resX * 0.09), (int)(resY * 0.15));
-            gTimerLbl.Location = new Point((int)(resX * 0.77), 0);
-            gTimerLbl.Font = new Font("Arial", (float)(resolution * 0.072), FontStyle.Bold);
-            gTimerLbl.TextAlign = ContentAlignment.MiddleLeft;
-            gTimerLbl.BackColor = Color.Transparent;
-            gTimerLbl.ForeColor = Color.White;
-            gTimerLbl.Text = $"{game.maxTimer}";
-            gTimerLbl.Enabled = true;
-            gTimerLbl.Visible = true;
+            lblStaticHeaderTimer.Parent = pnlHeaderBack;
+            lblStaticHeaderTimer.Name = "lblStaticHeaderTimer";
+            lblStaticHeaderTimer.AutoSize = false;
+            RelativeSize(lblStaticHeaderTimer, 0.05, 0.8);
+            RelativeLocation(lblStaticHeaderTimer, 0.871, 0.5);
+            lblStaticHeaderTimer.Font = new Font("Arial", (float)(resolution * 0.027), FontStyle.Bold);
+            lblStaticHeaderTimer.TextAlign = ContentAlignment.BottomLeft;
+            lblStaticHeaderTimer.BackColor = Color.Transparent;
+            lblStaticHeaderTimer.ForeColor = Color.White;
+            
+
+            lblDynamicHeaderTimer.Parent = pnlHeaderBack;
+            lblDynamicHeaderTimer.Name = "lblDynamicHeaderTimer";
+            lblDynamicHeaderTimer.AutoSize = false;
+            RelativeSize(lblDynamicHeaderTimer, 0.09, 1);
+            RelativeLocation(lblDynamicHeaderTimer, 0.815, 0.5);
+            lblDynamicHeaderTimer.Font = new Font("Arial", (float)(resolution * 0.072), FontStyle.Bold);
+            lblDynamicHeaderTimer.TextAlign = ContentAlignment.MiddleLeft;
+            lblDynamicHeaderTimer.BackColor = Color.Transparent;
+            lblDynamicHeaderTimer.ForeColor = Color.White;
             #endregion
 
+            #region pnlRBar
+            Panel pnlRBar = new Panel();
+            Label pnlRBarBack = new Label();
+            Panel pnlRBarForm = new Panel();
+            Label pnlRBarFormBorder = new Label();
+            Label pnlRBarFormBack = new Label();
+            Label lblCaseRisk = new Label();
+            Label lblCaseWeight = new Label();
+            Label lblCaseC = new Label();
+            Label lblCaseP = new Label();
+            CheckedListBox clCaseOptions = new CheckedListBox();
+            Button btnNextCase = new Button();
+
+            pnlRBar.Parent = this;
+            RelativeSize(pnlRBar, 0.3, 0.85);
+            RelativeLocation(pnlRBar, 0.85, 0.575);
+
+            pnlRBarBack.Parent = pnlRBar;
+            RelativeSize(pnlRBarBack, 1, 1);
+            RelativeLocation(pnlRBarBack);
+            pnlRBarBack.BackColor = Control.DefaultBackColor;
+            pnlRBarBack.Text = "";
+            pnlRBarForm.Parent = pnlRBarBack;
+            RelativeSize(pnlRBarForm, 0.8333, 0.6588);
+            RelativeLocation(pnlRBarForm, 0.5, 0.4);
+            pnlRBarForm.BackColor = Color.Black;
+
+            pnlRBarFormBorder.Parent = pnlRBarForm;
+            pnlRBarFormBorder.AutoSize = false;
+            RelativeSize(pnlRBarFormBorder);
+            RelativeLocation(pnlRBarFormBorder);
+            pnlRBarFormBorder.BackColor = Color.FromArgb(228, 87, 87);
+            pnlRBarFormBorder.Text = "";
+
+            pnlRBarFormBack.Parent = pnlRBarForm;
+            pnlRBarFormBack.AutoSize = false;
+            RelativeSize(pnlRBarFormBack, 0.937, 0.95);
+            RelativeLocation(pnlRBarFormBack);
+            pnlRBarFormBack.BackColor = Color.FromArgb(217, 217, 217);
+            pnlRBarFormBack.Text = "";
+
+            lblCaseRisk.Parent = pnlRBarFormBack;
+            lblCaseRisk.Name = "lblCaseRisk";
+            lblCaseRisk.Font = new Font("Arial", (int)(resolution * 0.0142), FontStyle.Bold);
+            lblCaseRisk.AutoSize = true;
+            RelativeLocation(lblCaseRisk, 0.02, 0.075, AnchorPos.TopLeft);
+            lblCaseRisk.ForeColor = Color.Black;
+            lblCaseRisk.BackColor = Color.Transparent;
+
+            lblCaseWeight.Parent = pnlRBarFormBack;
+            lblCaseWeight.Name = "lblCaseWeight";
+            lblCaseWeight.Font = new Font("Arial", (int)(resolution * 0.0142), FontStyle.Bold);
+            lblCaseWeight.AutoSize = true;
+            RelativeLocation(lblCaseWeight, 0.478, 0.075, AnchorPos.TopLeft);
+            lblCaseWeight.ForeColor = Color.Black;
+            lblCaseWeight.BackColor = Color.Transparent;
+
+            lblCaseC.Parent = pnlRBarFormBack;
+            lblCaseC.Name = "lblCaseC";
+            lblCaseC.Font = new Font("Arial", (int)(resolution * 0.0166), FontStyle.Bold);
+            lblCaseC.AutoSize = true;
+            RelativeLocation(lblCaseC, 0.02, 0.1503, AnchorPos.TopLeft);
+            lblCaseC.ForeColor = Color.Black;
+            lblCaseC.BackColor = Color.Transparent;
+
+            lblCaseP.Parent = pnlRBarFormBack;
+            lblCaseP.Name = "lblCaseP";
+            lblCaseP.Font = new Font("Arial", (int)(resolution * 0.0166), FontStyle.Bold);
+            lblCaseP.AutoSize = true;
+            RelativeLocation(lblCaseP, 0.02, 0.2255, AnchorPos.TopLeft);
+            lblCaseP.ForeColor = Color.Black;
+            lblCaseP.BackColor = Color.Transparent;
+
+            clCaseOptions.Parent = pnlRBarFormBack;
+            clCaseOptions.Name = "clCaseOptions";
+            RelativeSize(clCaseOptions, 0.952, 0.5);
+            RelativeLocation(clCaseOptions, 0.024, 0.5, AnchorPos.TopLeft);
+            clCaseOptions.Font = new Font("Arial", (int)(resolution * 0.025), FontStyle.Bold);
+            clCaseOptions.BackColor = Color.FromArgb(217, 217, 217);
+            clCaseOptions.BorderStyle = BorderStyle.None;
+            clCaseOptions.CheckOnClick = true;
+            clCaseOptions.Items.AddRange(new object[] {
+            "Extintores de incêndio",
+            "Saídas de emergência",
+            "Rotas de fuga",
+            "Alarmes de incêndio"});
+            clCaseOptions.ItemCheck += CaseOptions_ItemCheck;
+
+            btnNextCase.Parent = pnlRBarBack;
+            RelativeSize(btnNextCase, 0.8, 0.1176);
+            RelativeLocation(btnNextCase, 0.5, 0.847);
+            btnNextCase.BackColor = Color.FromArgb(107, 200, 118);
+            btnNextCase.FlatStyle = FlatStyle.Flat;
+            btnNextCase.FlatAppearance.BorderSize = 0;
+            btnNextCase.Text = "Próximo";
+            btnNextCase.Font = new Font("Arial", (float)(resolution * 0.02), FontStyle.Bold);
+            btnNextCase.Click += NextCase_Click;
             #endregion
 
-            #region Game Right Bar
-            gRBar.Size = new Size((int)(resX * 0.3), (int)(resY * 0.85));
-            gRBar.Location = new Point((int)(resX * 0.7), (int)(resY * 0.15));
-            gRBar.Enabled = true;
-            gRBar.Visible = true;
+            #region pnlCenter
+            Panel pnlCenter = new Panel();
+            Label pnlCenterBack = new Label();
+            PictureBox pictCaseImage = new PictureBox();
+            Label lblCaseImageDesc = new Label();
 
-            gRBarBack.Size = new Size((int)(resX * 0.3), (int)(resY * 0.85));
-            gRBarBack.Location = new Point(0, 0);
-            gRBarBack.BackColor = Control.DefaultBackColor;
-            gRBarBack.Text = "";
-            gRBarBack.Enabled = true;
-            gRBarBack.Visible = true;
+            pnlCenter.Parent = this;
+            RelativeSize(pnlCenter, 0.62, 0.71);
+            RelativeLocation(pnlCenter, 0.35, 0.575);
+            pnlCenter.BackColor = Color.Transparent;
 
-            gRBarForm.Parent = gRBarBack;
-            gRBarForm.Location = new Point(0, (int)(resY * 0.07));
-            gRBarForm.Size = new Size((int)(resX * 0.25), (int)(resY * 0.56));
-            gRBarForm.Enabled = true;
-            gRBarForm.Visible = true;
+            pnlCenterBack.Parent = pnlCenter;
+            pnlCenterBack.AutoSize = false;
+            RelativeSize(pnlCenterBack);
+            RelativeLocation(pnlCenterBack, 0.5, 0.5);
+            pnlCenterBack.BackColor = Control.DefaultBackColor;
+            pnlCenterBack.Text = "";
 
-            gRBarFormBorder.Location = new Point(0, 0);
-            gRBarFormBorder.Size = new Size((int)(resX * 0.25), (int)(resY * 0.56));
-            gRBarFormBorder.BackColor = Color.FromArgb(228, 87, 87);
-            gRBarFormBorder.Text = "";
-            gRBarFormBorder.Enabled = true;
-            gRBarFormBorder.Visible = true;
+            pictCaseImage.Parent = pnlCenterBack;
+            pictCaseImage.Name = "pictCaseImage";
+            RelativeSize(pictCaseImage, 0.9677, 0.845);
+            RelativeLocation(pictCaseImage, 0, 0, AnchorPos.TopLeft);
 
-            gRBarFormBack.Location = new Point((int)(resX * 0.007875), (int)(resY * 0.014));
-            gRBarFormBack.Size = new Size((int)(resX * 0.25 - gRBarFormBack.Location.X * 2), (int)(resY * 0.56 - gRBarFormBack.Location.Y * 2));
-            gRBarFormBack.BackColor = Color.FromArgb(217, 217, 217);
-            gRBarFormBack.Text = "";
-            gRBarFormBack.Enabled = true;
-            gRBarFormBack.Visible = true;
-
-            gCaseRisk.Parent = gRBarFormBack;
-            gCaseRisk.Location = new Point((int)(resX * 0.005), (int)(resY * 0.04));
-            gCaseRisk.Font = new Font("Arial", 10, FontStyle.Bold);
-            gCaseRisk.ForeColor = Color.Black;
-            gCaseRisk.Enabled = true;
-            gCaseRisk.Visible = true;
-
-            gCaseWeight.Parent = gRBarFormBack;
-            gCaseWeight.Location = new Point((int)(resX * 0.112125), (int)(resY * 0.04));
-            gCaseWeight.Font = new Font("Arial", 10, FontStyle.Bold);
-            gCaseWeight.ForeColor = Color.Black;
-            gCaseWeight.Enabled = true;
-            gCaseWeight.Visible = true;
-
-            gCaseC.Parent = gRBarFormBack;
-            gCaseC.Location = new Point((int)(resX * 0.005), (int)(resY * 0.08));
-            gCaseC.Font = new Font("Arial", 12, FontStyle.Bold);
-            gCaseC.ForeColor = Color.Black;
-            gCaseC.Enabled = true;
-            gCaseC.Visible = true;
-
-            gCaseP.Parent = gRBarFormBack;
-            gCaseP.Location = new Point((int)(resX * 0.005), (int)(resY * 0.12));
-            gCaseP.Font = new Font("Arial", 12, FontStyle.Bold);
-            gCaseP.ForeColor = Color.Black;
-            gCaseP.Enabled = true;
-            gCaseP.Visible = true;
-
-            clOptions.Parent = gRBarFormBack;
-            clOptions.Location = new Point((int)(resX * 0.005625), (int)(resY * 0.266));
-            clOptions.Size = new Size(gRBarFormBack.Size.Width - clOptions.Location.X, gRBarFormBack.Size.Height - clOptions.Location.Y);
-            clOptions.Font = new Font("Arial", (float)(resolution * 0.025), FontStyle.Bold);
-            clOptions.BackColor = Color.FromArgb(217, 217, 217);
-            clOptions.Enabled = true;
-            clOptions.Visible = true;
-
-            btnNext.Parent = gRBarBack;
-            btnNext.Location = new Point((int)(resX * 0.005), (int)(gRBarForm.Size.Height + gRBarForm.Location.Y + resY * 0.05));
-            btnNext.Size = new Size((int)(resX * 0.24), (int)(resY * 0.1));
-            btnNext.BackColor = Color.FromArgb(107, 200, 118);
-            btnNext.FlatStyle = FlatStyle.Flat;
-            btnNext.FlatAppearance.BorderSize = 0;
-            btnNext.Text = "Próximo";
-            btnNext.Font = new Font("Arial", (float)(resolution * 0.02), FontStyle.Bold);
-            btnNext.Enabled = true;
-            btnNext.Visible = true;
+            lblCaseImageDesc.Parent = pnlCenterBack;
+            lblCaseImageDesc.Name = "lblCaseImageDesc";
+            lblCaseImageDesc.AutoSize = false;
+            RelativeSize(lblCaseImageDesc, 0.4516, 0.0704);
+            RelativeLocation(lblCaseImageDesc, 0.2258, 0.9084);
+            lblCaseImageDesc.Text = "Estado do projeto: Reprovado";
+            lblCaseImageDesc.Font = new Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
+            lblCaseImageDesc.BackColor = Color.Transparent;
+            lblCaseImageDesc.ForeColor = Color.Black;
+            lblCaseImageDesc.TextAlign = ContentAlignment.MiddleLeft;
             #endregion
 
-            #region Game Center
-            gCenter.Size = new Size((int)(resX * 0.62), (int)(resY * 0.71));
-            gCenter.Location = new Point((int)(resX * 0.04), (int)(resY * 0.22));
-            gCenter.Enabled = true;
-            gCenter.Visible = true;
+            #region Controls
+            pnlCenterBack.Controls.Add(pictCaseImage);
+            pnlCenterBack.Controls.Add(lblCaseImageDesc);
+            pnlCenter.Controls.Add(pnlCenterBack);
 
-            gCenterBack.Size = new Size((int)(resX * 0.62), (int)(resY * 0.71));
-            gCenterBack.Location = new Point(0, 0);
-            gCenterBack.BackColor = Control.DefaultBackColor;
-            gCenterBack.Text = "";
-            gCenterBack.Enabled = true;
-            gCenterBack.Visible = true;
+            pnlRBarFormBack.Controls.Add(clCaseOptions);
+            pnlRBarFormBack.Controls.Add(lblCaseC);
+            pnlRBarFormBack.Controls.Add(lblCaseP);
+            pnlRBarFormBack.Controls.Add(lblCaseWeight);
+            pnlRBarFormBack.Controls.Add(lblCaseRisk);
+            pnlRBarForm.Controls.Add(pnlRBarFormBack);
+            pnlRBarForm.Controls.Add(pnlRBarFormBorder);
 
-            gImage.Parent = gCenterBack;
-            gImage.Size = new Size((int)(resX * 0.6), (int)(resY * 0.6));
-            gImage.Location = new Point(0, 0);
-            gImage.Enabled = true;
-            gImage.Visible = true;
+            pnlRBarBack.Controls.Add(btnNextCase);
+            pnlRBarBack.Controls.Add(pnlRBarForm);
+            pnlRBar.Controls.Add(pnlRBarBack);
 
-            gImageDesc.Parent = gCenterBack;
-            gImageDesc.Location = new Point(0, (int)(gImage.Size.Height + gImage.Location.Y + resY * 0.02));
-            gImageDesc.Size = new Size((int)(resX * 0.28), (int)(resY * 0.05));
-            gImageDesc.Font = new Font("Arial", (float)(resolution * 0.019), FontStyle.Bold);
-            gImageDesc.BackColor = Color.Transparent;
-            gImageDesc.ForeColor = Color.Black;
-            gImageDesc.TextAlign = ContentAlignment.MiddleLeft;
-            gImageDesc.Enabled = true;
-            gImageDesc.Visible = true;
+            pnlHeaderBack.Controls.Add(lblStaticHeaderTimer);
+            pnlHeaderBack.Controls.Add(lblDynamicHeaderTimer);
+            pnlHeaderBack.Controls.Add(pictHeaderTimer);
+            pnlHeaderBack.Controls.Add(pnlHeaderTitle);
+            pnlHeader.Controls.Add(pnlHeaderBack);
+
+            this.Controls.Add(pnlCenter);
+            this.Controls.Add(pnlHeader);
+            this.Controls.Add(pnlRBar);
             #endregion
-
-            this.Controls.Add(this.gCenter);
-            this.Controls.Add(this.gRBar);
-            this.Controls.Add(this.gHeader);
         }
         private void UpdateMainGame()
         {
-            gHeaderTitle.Text = $"Caso {game.caseNumber} - {game.currentCase.name}";
-            gCaseRisk.Text = $"Risco: {game.currentCase.RiskText()}";
-            gCaseWeight.Text = $"Gravidade: {game.currentCase.WeightText()}";
-            gCaseC.Text = $"Capacidade de Passagem: {game.currentCase.c}";
-            gCaseP.Text = $"População: {game.currentCase.p}";
-            gImage.Image = Image.FromFile(projectDirectory + $"\\img\\{game.currentCase.imgName}");
-            gTimerLbl.Text = $"{game.maxTimer}";
-            while (clOptions.CheckedIndices.Count > 0)
+            Label pnlHeaderTitle = GetComponent("pnlHeaderTitle") as Label;
+            Label lblCaseRisk = GetComponent("lblCaseRisk") as Label;
+            Label lblCaseC = GetComponent("lblCaseC") as Label;
+            Label lblCaseWeight = GetComponent("lblCaseWeight") as Label;
+            Label lblCaseP = GetComponent("lblCaseP") as Label;
+            Label lblStaticHeaderTimer = GetComponent("lblStaticHeaderTimer") as Label;
+            Label lblDynamicHeaderTimer = GetComponent("lblDynamicHeaderTimer") as Label;
+            PictureBox pictCaseImage = GetComponent("pictCaseImage") as PictureBox;
+            CheckedListBox clCaseOptions = GetComponent("clCaseOptions") as CheckedListBox;
+            if (clCaseOptions == null || pictCaseImage == null || lblDynamicHeaderTimer == null || lblStaticHeaderTimer == null || pnlHeaderTitle == null || lblCaseRisk == null || lblCaseWeight == null || lblCaseP == null || lblCaseC == null) return;
+
+            pnlHeaderTitle.Text = $"Caso {game.caseNumber} - {game.currentCase.name}";
+            lblCaseRisk.Text = $"Risco: {game.currentCase.RiskText()}";
+            lblCaseWeight.Text = $"Gravidade: {game.currentCase.WeightText()}";
+            lblCaseC.Text = $"Capacidade de Passagem: {game.currentCase.c}";
+            lblCaseP.Text = $"População: {game.currentCase.p}";
+            pictCaseImage.Image = Image.FromFile(projectDirectory + $"\\img\\{game.currentCase.imgName}");
+            lblStaticHeaderTimer.Text = $"/{game.maxTimer}";
+            lblDynamicHeaderTimer.Text = $"{game.maxTimer}";
+            while (clCaseOptions.CheckedIndices.Count > 0)
             {
-                clOptions.SetItemChecked(clOptions.CheckedIndices[0], false);
+                clCaseOptions.SetItemChecked(clCaseOptions.CheckedIndices[0], false);
             }
         }
-        private async void ProjectStateCheck()
+        private void CaseOptions_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            if (clOptions.CheckedItems.Count == 4)
-                gImageDesc.Text = "Estado do projeto: Aprovado";
+            Label lblCaseImageDesc = GetComponent("lblCaseImageDesc") as Label;
+            CheckedListBox clCaseOptions = sender as CheckedListBox;
+            if (lblCaseImageDesc == null) return;
+
+            if (clCaseOptions.CheckedItems.Count == 3 && e.NewValue == CheckState.Checked)
+                lblCaseImageDesc.Text = "Estado do projeto: Aprovado";
             else
-                gImageDesc.Text = "Estado do projeto: Reprovado";
-            await Task.Delay(33); //~30fps
-            ProjectStateCheck();
+                lblCaseImageDesc.Text = "Estado do projeto: Reprovado";
         }
-        private void NextClick(object sender, EventArgs e)
+        private void NextCase_Click(object sender, EventArgs e)
         {
-            game.UpdateCase(clOptions);
+            CheckedListBox clCaseOptions = GetComponent("clCaseOptions") as CheckedListBox;
+            if (clCaseOptions == null) return;
+
+            game.UpdateCase(clCaseOptions);
             UpdateMainGame();
             if (game.End())
             {
