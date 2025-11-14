@@ -47,7 +47,6 @@ namespace game
         {
             Form currentForm = Form.ActiveForm;
             if (currentForm == null) return;
-
             for (int i = currentForm.Controls.Count - 1; i >= 0; i--)
             {
                 currentForm.Controls[i].Dispose();
@@ -225,7 +224,6 @@ namespace game
             pictMenuBg.Controls.Add(pnlMenu);
 
             this.Controls.Add(pictMenuBg);
-
             pictMenuBg.Image = menu_bg;
         }
         private void MenuStart_MouseClick(object sender, MouseEventArgs e)
@@ -333,6 +331,7 @@ namespace game
             pnlGameFog.Controls.Add(pnlHowToPlay);
             this.Controls.Add(pnlGameFog);
             pnlGameFog.BringToFront();
+            ActiveForm.ResumeLayout(false);
         }
         private void HowToPlayBack_Click(object sender, EventArgs e)
         {
@@ -609,7 +608,7 @@ namespace game
         {
             Label lblCaseImageDesc = GetComponent("lblCaseImageDesc") as Label;
             CheckedListBox clCaseOptions = sender as CheckedListBox;
-            if (lblCaseImageDesc == null) return;
+            if (lblCaseImageDesc == null || clCaseOptions == null) return;
 
             if (clCaseOptions.CheckedItems.Count == 3 && e.NewValue == CheckState.Checked)
                 lblCaseImageDesc.Text = "Estado do projeto: Aprovado";
@@ -678,9 +677,6 @@ namespace game
         }
         public void SetResultDesign(int resolution)
         {
-            int resX = resolution * 16 / 9, resY = resolution;
-
-            this.Controls.Clear();
             Panel pnlGameFog = new Panel();
             GroupBox gpbResult = new GroupBox();
             Label gpbResultBack = new Label();
@@ -688,12 +684,12 @@ namespace game
             Label lblResultado = new Label();
 
             Panel[] pnlResultCase = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
-            Panel[] pnlResultCaseBorder = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
             Panel[] pnlResultCaseBack = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
             Label[] lblCaseName = new Label[4] { new Label(), new Label(), new Label(), new Label() };
             Label[] lblTextos = new Label[4] { new Label(), new Label(), new Label(), new Label() };
             Button btnBack = new Button();
 
+            
             pnlGameFog.Parent = this;
             RelativeSize(pnlGameFog);
             RelativeLocation(pnlGameFog, 0.5, 0.5);
@@ -704,6 +700,7 @@ namespace game
             RelativeLocation(gpbResult, 0.5, 0.475);
             gpbResult.BackColor = Color.FromArgb(217, 217, 217);
 
+            gpbResult.SuspendLayout();
             gpbResultBorder.Parent = gpbResult;
             gpbResultBorder.AutoSize = false;
             RelativeSize(gpbResultBorder);
@@ -719,7 +716,7 @@ namespace game
             gpbResultBack.Text = "";
 
             lblResultado.Parent = gpbResult;
-            lblResultado.Text = "Resultado final";
+            lblResultado.Text = $"Resultado final {game.results.corrects}/{game.MaxNumberOfCases}";
             lblResultado.Font = new Font("Arial", (int)(resolution * 0.05), FontStyle.Bold);
             lblResultado.BackColor = Color.Transparent;
             lblResultado.ForeColor = Color.FromArgb(228, 60, 60);
@@ -736,42 +733,40 @@ namespace game
                 RelativeSize(pnlResultCase[i], 0.5, 0.3);
                 pnlResultCase[i].BackColor = Color.FromArgb(217, 217, 217);
 
-                pnlResultCaseBorder[i].Parent = pnlResultCase[i];
-                pnlResultCaseBorder[i].Location = new Point(0, 0);
-                RelativeSize(pnlResultCaseBorder[i]);
-                pnlResultCaseBorder[i].BackColor = Color.FromArgb(210, 210, 210);
-                pnlResultCaseBorder[i].Text = "";
-                pnlResultCaseBorder[i].Visible = false;
-
                 pnlResultCaseBack[i].Parent = pnlResultCase[i];
-                pnlResultCaseBack[i].Location = new Point(0, 0);
-                RelativeSize(pnlResultCaseBack[i], 0.98, 0.95);
-                RelativeLocation(pnlResultCaseBack[i], 0.5, 0.5);
                 pnlResultCaseBack[i].BackColor = Color.FromArgb(217, 217, 217);
+                RelativeSize(pnlResultCaseBack[i], 1, 1);
+                RelativeLocation(pnlResultCaseBack[i], 0.5, 0.5);
                 pnlResultCaseBack[i].Text = "";
 
                 lblCaseName[i].Parent = pnlResultCaseBack[i];
+                lblCaseName[i].BackColor = Color.Transparent;
+                lblCaseName[i].ForeColor = Color.Black;
                 lblCaseName[i].AutoSize = true;
                 lblCaseName[i].Text = $"{name}";
                 lblCaseName[i].Font = new Font("Arial", (int)(resolution * 0.02), FontStyle.Bold);
-                lblCaseName[i].BackColor = Color.Transparent;
-                lblCaseName[i].ForeColor = Color.Black;
                 lblCaseName[i].Location = new Point((int)(pnlResultCase[i].Size.Width * 0.5 - lblCaseName[i].Size.Width * 0.5), (int)(pnlResultCase[i].Size.Height * 0.1));
-                pnlResultCaseBack[i].Controls.Add(lblCaseName[i]);
+                
 
                 lblTextos[i].Parent = pnlResultCaseBack[i];
+                lblTextos[i].BackColor = Color.Transparent;
+                lblTextos[i].ForeColor = Color.Black;
                 lblTextos[i].AutoSize = true;
                 lblTextos[i].Text = $"Extintores de incêndio: {indexesResults[0]}\nSaídas de emergência: {indexesResults[1]}\nRotas de fuga: {indexesResults[2]}\nAlarmes de incêndio: {indexesResults[3]}";
                 lblTextos[i].Font = new Font("Arial", (int)(resolution * 0.015), FontStyle.Bold);
-                lblTextos[i].BackColor = Color.Transparent;
-                lblTextos[i].ForeColor = Color.Black;
+                
                 RelativeLocation(lblTextos[i], 0.5, 0.5);
                 lblTextos[i].TextAlign = ContentAlignment.MiddleCenter;
+
+                pnlResultCaseBack[i].SuspendLayout();
+                pnlResultCaseBack[i].Controls.Add(lblCaseName[i]);
                 pnlResultCaseBack[i].Controls.Add(lblTextos[i]);
 
                 pnlResultCase[i].Controls.Add(pnlResultCaseBack[i]);
-                pnlResultCase[i].Controls.Add(pnlResultCaseBorder[i]);
+
                 gpbResultBack.Controls.Add(pnlResultCase[i]);
+
+
                 if (j == 0)
                     j = pnlResultCase[i].Size.Width;
                 else if (z == 0)
@@ -791,14 +786,14 @@ namespace game
             btnBack.FlatAppearance.BorderSize = 0;
             btnBack.Font = new Font("Arial", (float)(resolution * 0.02), FontStyle.Bold);
             btnBack.Click += ResultBack_Click;
-
+            
+            
             gpbResult.Controls.Add(btnBack);
             gpbResult.Controls.Add(lblResultado);
             gpbResult.Controls.Add(gpbResultBack);
             gpbResult.Controls.Add(gpbResultBorder);
-
+            
             pnlGameFog.Controls.Add(gpbResult);
-            this.Controls.Add(pnlGameFog);
         }
 
         private void ResultBack_Click(object sender, EventArgs e)

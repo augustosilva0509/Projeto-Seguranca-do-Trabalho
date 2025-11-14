@@ -10,8 +10,8 @@ namespace game
 {
     public class Game
     {
-        private const int maxNumberOfCases = 4;
-        private Project[] projects = new Project[maxNumberOfCases];
+        private int maxNumberOfCases = 4;
+        private Project[] projects;
 
         private int timer;
 
@@ -21,6 +21,7 @@ namespace game
         public Result results;
         public Project currentCase;
 
+        public int MaxNumberOfCases { get => maxNumberOfCases; }
         public int Timer { get => timer; set => timer = value; }
 
         public Game(int maxTimer)
@@ -29,6 +30,7 @@ namespace game
             this.timer = this.maxTimer;
             this.caseNumber = 1;
             this.results = new Result(maxNumberOfCases);
+            this.projects = new Project[maxNumberOfCases];
             this.projects = Project.InitializeProjects();
             this.currentCase = Project.GetRandomProject(this.projects, this.caseNumber);
         }
