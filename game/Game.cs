@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Deployment.Application;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,14 +12,18 @@ namespace game
     {
         private const int maxNumberOfCases = 4;
         private Project[] projects = new Project[maxNumberOfCases];
+
         private int timer;
 
+        public bool timerEnded;
         public int maxTimer;
         public int caseNumber;
         public Result results;
         public Project currentCase;
 
-        public Game(int maxTimer, Label lblTimer) 
+        public int Timer { get => timer; set => timer = value; }
+
+        public Game(int maxTimer)
         {
             this.maxTimer = maxTimer;
             this.timer = this.maxTimer;
@@ -27,9 +31,8 @@ namespace game
             this.results = new Result(maxNumberOfCases);
             this.projects = Project.InitializeProjects();
             this.currentCase = Project.GetRandomProject(this.projects, this.caseNumber);
-            TimerCounter(lblTimer);
         }
-        public void UpdateCase(CheckedListBox clb)
+        public void UpdateCase(CheckedListBox clb, bool timesUp = false)
         {
             this.results.UpdateCase(this.currentCase, GetErrorIndices(clb, this.currentCase));
             this.currentCase = Project.GetRandomProject(this.projects, this.caseNumber);
@@ -44,27 +47,6 @@ namespace game
             checkedIndices.SymmetricExceptWith(projectIndices);
 
             return checkedIndices.ToArray<int>();
-        }
-        public void EndTimer()
-        {
-            this.timer = -1;
-        }
-        private async void TimerCounter(Label lblTimer)
-        {
-            if (this.timer == 0)
-            {
-                MessageBox.Show("Tempo esgotado!");
-                Application.Exit();
-            }
-            else if(this.timer < 0)
-            {
-                return;
-            }
-
-                await Task.Delay(1000);
-            this.timer--;
-            lblTimer.Text = $"{this.timer}";
-            TimerCounter(lblTimer);
         }
         public bool End()
         {

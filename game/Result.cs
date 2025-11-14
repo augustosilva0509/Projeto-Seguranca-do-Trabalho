@@ -31,7 +31,7 @@ namespace game
         }
         public void UpdateCase(Project caseProject, int[] errors)
         {
-            if(counter >= cases.Length)
+            if (counter >= cases.Length)
                 return;
             this.cases[counter] = new CaseResult(caseProject, errors);
             counter++;
@@ -42,14 +42,14 @@ namespace game
         }
         public string[] IndexesResults()
         {
-            string[] ret = new string[] {"Certo","Certo","Certo","Certo"};
-            foreach(int index in this.cases[counter - 1].errors)
+            string[] ret = new string[] { "Certo", "Certo", "Certo", "Certo" };
+            foreach (int index in this.cases[counter - 1].errors)
             {
                 ret[index] = "Errado";
             }
             counter--;
             return ret;
         }
-        
+
     }
 }

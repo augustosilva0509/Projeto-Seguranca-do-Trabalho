@@ -11,6 +11,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 using static System.Net.WebRequestMethods;
 
@@ -18,10 +19,13 @@ namespace game
 {
     public partial class Main : Form
     {
-        private static string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.FullName;
+        private static string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
         private int resolution = 720;
         private Game game;
         private Image menu_bg;
+        private CancellationTokenSource timer;
+        private CancellationToken token;
+
         private enum AnchorPos
         {
             Center,
@@ -34,22 +38,23 @@ namespace game
         {
             InitializeComponent();
             menu_bg = Image.FromFile(projectDirectory + $"\\img\\menu_bg.jpeg");
-            this.Size = new Size((int)(resolution * (16/9) * 1.01), (int)(resolution * 1.05));
+            this.Size = new Size((int)(resolution * 16 / 9 * 1.05), (int)(resolution * 1.01));
             this.MaximizeBox = false;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenu();
         }
-        public static void ResetForm()
+        private void ResetForm()
         {
             Form currentForm = Form.ActiveForm;
             if (currentForm == null) return;
-            for (int i = currentForm.Controls.Count-1; i >= 0; i--)
+
+            for (int i = currentForm.Controls.Count - 1; i >= 0; i--)
             {
                 currentForm.Controls[i].Dispose();
             }
             currentForm.Cursor = Cursors.Default;
         }
-        private Control GetComponent(string name)
+        public static Control GetComponent(string name)
         {
             Form currentForm = Form.ActiveForm;
             if (currentForm == null) return null;
@@ -127,11 +132,8 @@ namespace game
         }
         private void SetMenuDesign(int resolution)
         {
-            this.Controls.Clear();
-            this.Size = new Size((int)(resolution * 16/9 * 1.01), (int)(resolution * 1.05));
-
             Panel pnlMenu = new Panel();
-            
+
             Label lblMenuTitle = new Label();
             Label lblMenuTitleBorder = new Label();
             Label lblMenuStart = new Label();
@@ -140,14 +142,15 @@ namespace game
             Label lblMenuExit = new Label();
 
             PictureBox pictMenuBg = new PictureBox();
+
             pictMenuBg.Parent = this;
-            pictMenuBg.Name = "pictMenuBg";
             RelativeSize(pictMenuBg);
             RelativeLocation(pictMenuBg, 0.5, 0.5);
+            pictMenuBg.SizeMode = PictureBoxSizeMode.StretchImage;
 
             pnlMenu.Parent = pictMenuBg;
             RelativeSize(pnlMenu);
-            RelativeLocation(pnlMenu,0.5,0.5);
+            RelativeLocation(pnlMenu, 0.5, 0.5);
             pnlMenu.BackColor = Color.Transparent;
 
             lblMenuTitleBorder.Parent = pnlMenu;
@@ -224,22 +227,13 @@ namespace game
             this.Controls.Add(pictMenuBg);
 
             pictMenuBg.Image = menu_bg;
-            ResumeLayout(false);
         }
         private void MenuStart_MouseClick(object sender, MouseEventArgs e)
         {
-            Form currentForm = Form.ActiveForm;
-            if (currentForm == null) return;
-            PictureBox a = currentForm.Controls.Find("pictMenuBg", false).First() as PictureBox;
-            a.Image = null;
             MainGame();
         }
         private void MenuHowToPlay_MouseClick(object sender, MouseEventArgs e)
         {
-            Form currentForm = Form.ActiveForm;
-            if (currentForm == null) return;
-            PictureBox a = currentForm.Controls.Find("pictMenuBg", false).First() as PictureBox;
-            a.Image = null;
             HowToPlay();
         }
         private void MenuExit_MouseClick(object sender, MouseEventArgs e)
@@ -268,7 +262,6 @@ namespace game
         }
         private void SetHowToPlay(int resolution)
         {
-            
             Panel pnlGameFog = new Panel();
             Panel pnlHowToPlay = new Panel();
             Label pnlHowToPlayBorder = new Label();
@@ -276,8 +269,6 @@ namespace game
             Label lblHowToPlayTitle = new Label();
             Label lblHowToPlayText = new Label();
             Button btnHowToPlayBack = new Button();
-
-            
 
             pnlGameFog.Parent = this;
             RelativeSize(pnlGameFog);
@@ -341,6 +332,7 @@ namespace game
 
             pnlGameFog.Controls.Add(pnlHowToPlay);
             this.Controls.Add(pnlGameFog);
+            pnlGameFog.BringToFront();
         }
         private void HowToPlayBack_Click(object sender, EventArgs e)
         {
@@ -353,9 +345,13 @@ namespace game
         {
             ResetForm();
             SetGameDesign(resolution);
-            Label lblTimer = GetComponent("lblDynamicHeaderTimer") as Label;
-            if (lblTimer == null) return;
-            game = new Game(30, lblTimer);
+            game = new Game(30);
+            Label lblDynamicHeaderTimer = GetComponent("lblDynamicHeaderTimer") as Label;
+            if (lblDynamicHeaderTimer == null) return;
+
+            timer = new CancellationTokenSource();
+            token = timer.Token;
+            TimerCounter(lblDynamicHeaderTimer);
             UpdateMainGame();
         }
         private void SetGameDesign(int resolution)
@@ -367,7 +363,9 @@ namespace game
             PictureBox pictHeaderTimer = new PictureBox();
             Label lblStaticHeaderTimer = new Label();
             Label lblDynamicHeaderTimer = new Label();
+
             pnlHeader.Parent = this;
+            pnlHeader.Name = "pnlHeader";
             RelativeSize(pnlHeader, 1, 0.15);
             RelativeLocation(pnlHeader, 0.5, 0.075);
 
@@ -403,7 +401,7 @@ namespace game
             lblStaticHeaderTimer.TextAlign = ContentAlignment.BottomLeft;
             lblStaticHeaderTimer.BackColor = Color.Transparent;
             lblStaticHeaderTimer.ForeColor = Color.White;
-            
+
 
             lblDynamicHeaderTimer.Parent = pnlHeaderBack;
             lblDynamicHeaderTimer.Name = "lblDynamicHeaderTimer";
@@ -430,6 +428,7 @@ namespace game
             Button btnNextCase = new Button();
 
             pnlRBar.Parent = this;
+            pnlRBar.Name = "pnlRBar";
             RelativeSize(pnlRBar, 0.3, 0.85);
             RelativeLocation(pnlRBar, 0.85, 0.575);
 
@@ -522,6 +521,7 @@ namespace game
             Label lblCaseImageDesc = new Label();
 
             pnlCenter.Parent = this;
+            pnlCenter.Name = "pnlCenter";
             RelativeSize(pnlCenter, 0.62, 0.71);
             RelativeLocation(pnlCenter, 0.35, 0.575);
             pnlCenter.BackColor = Color.Transparent;
@@ -574,8 +574,8 @@ namespace game
             pnlHeader.Controls.Add(pnlHeaderBack);
 
             this.Controls.Add(pnlCenter);
-            this.Controls.Add(pnlHeader);
             this.Controls.Add(pnlRBar);
+            this.Controls.Add(pnlHeader);
             #endregion
         }
         private void UpdateMainGame()
@@ -590,6 +590,7 @@ namespace game
             PictureBox pictCaseImage = GetComponent("pictCaseImage") as PictureBox;
             CheckedListBox clCaseOptions = GetComponent("clCaseOptions") as CheckedListBox;
             if (clCaseOptions == null || pictCaseImage == null || lblDynamicHeaderTimer == null || lblStaticHeaderTimer == null || pnlHeaderTitle == null || lblCaseRisk == null || lblCaseWeight == null || lblCaseP == null || lblCaseC == null) return;
+
 
             pnlHeaderTitle.Text = $"Caso {game.caseNumber} - {game.currentCase.name}";
             lblCaseRisk.Text = $"Risco: {game.currentCase.RiskText()}";
@@ -617,22 +618,62 @@ namespace game
         }
         private void NextCase_Click(object sender, EventArgs e)
         {
+            UpdateCase();
+        }
+        private void UpdateCase()
+        {
             CheckedListBox clCaseOptions = GetComponent("clCaseOptions") as CheckedListBox;
             if (clCaseOptions == null) return;
 
             game.UpdateCase(clCaseOptions);
             UpdateMainGame();
+
+            ResetTimer();
+
             if (game.End())
             {
                 GameResults();
-                game.EndTimer();
+                timer.Cancel();
             }
+        }
+        private void ResetTimer()
+        {
+            Label lblTimer = GetComponent("lblDynamicHeaderTimer") as Label;
+            if (lblTimer == null) return;
+            timer.Cancel();
+            timer.Dispose();
+
+            timer = new CancellationTokenSource();
+            token = timer.Token;
+            TimerCounter(lblTimer);
+        }
+        private async void TimerCounter(Label lblTimer)
+        {
+            if (game.Timer == 0)
+            {
+                UpdateCase();
+                return;
+            }
+            try
+            {
+                await Task.Delay(1000, token);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
+            game.Timer--;
+
+            lblTimer.Text = $"{game.Timer}";
+            TimerCounter(lblTimer);
         }
         #endregion
 
         #region GameResults
         private void GameResults()
         {
+            ResetForm();
             SetResultDesign(resolution);
         }
         public void SetResultDesign(int resolution)
@@ -655,11 +696,11 @@ namespace game
 
             pnlGameFog.Parent = this;
             RelativeSize(pnlGameFog);
-            RelativeLocation(pnlGameFog, 0.5,0.5);
+            RelativeLocation(pnlGameFog, 0.5, 0.5);
             pnlGameFog.BackColor = Color.FromArgb(160, 160, 160);
 
             gpbResult.Parent = pnlGameFog;
-            RelativeSize(gpbResult,0.6,0.9);
+            RelativeSize(gpbResult, 0.6, 0.9);
             RelativeLocation(gpbResult, 0.5, 0.475);
             gpbResult.BackColor = Color.FromArgb(217, 217, 217);
 
@@ -685,7 +726,7 @@ namespace game
             lblResultado.AutoSize = true;
             lblResultado.Location = new Point((int)(gpbResult.Size.Width * 0.5 - lblResultado.Size.Width * 0.5), (int)(gpbResult.Size.Height * 0.05));
             int j = 0, z = 0; string name = ""; string[] indexesResults = new string[4];
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 name = game.results.Name();
                 indexesResults = game.results.IndexesResults();
@@ -724,14 +765,14 @@ namespace game
                 lblTextos[i].Font = new Font("Arial", (int)(resolution * 0.015), FontStyle.Bold);
                 lblTextos[i].BackColor = Color.Transparent;
                 lblTextos[i].ForeColor = Color.Black;
-                RelativeLocation(lblTextos[i],0.5,0.5);
+                RelativeLocation(lblTextos[i], 0.5, 0.5);
                 lblTextos[i].TextAlign = ContentAlignment.MiddleCenter;
                 pnlResultCaseBack[i].Controls.Add(lblTextos[i]);
 
                 pnlResultCase[i].Controls.Add(pnlResultCaseBack[i]);
                 pnlResultCase[i].Controls.Add(pnlResultCaseBorder[i]);
                 gpbResultBack.Controls.Add(pnlResultCase[i]);
-                if(j==0)
+                if (j == 0)
                     j = pnlResultCase[i].Size.Width;
                 else if (z == 0)
                 {
@@ -743,7 +784,7 @@ namespace game
             btnBack.Parent = gpbResult;
             btnBack.Text = "Voltar para o menu";
             btnBack.AutoSize = false;
-            RelativeSize(btnBack,0.5,0.1);
+            RelativeSize(btnBack, 0.5, 0.1);
             RelativeLocation(btnBack, 0.5, 0.885);
             btnBack.BackColor = Color.FromArgb(107, 200, 118);
             btnBack.FlatStyle = FlatStyle.Flat;
