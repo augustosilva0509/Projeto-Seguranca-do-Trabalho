@@ -366,7 +366,7 @@ namespace game
         {
             ResetForm();
             SetGameDesign(resolution);
-            game = new Game(3, numberOfProjects);
+            game = new Game(30, numberOfProjects);
             Label lblDynamicHeaderTimer = GetComponent("lblDynamicHeaderTimer") as Label;
             if (lblDynamicHeaderTimer == null) return;
 
@@ -743,13 +743,13 @@ namespace game
             lblResultado.Font = new Font("Arial", (int)(resolution * 0.05), FontStyle.Bold);
             lblResultado.BackColor = Color.Transparent;
             lblResultado.ForeColor = Color.FromArgb(228, 60, 60);
-            RelativeLocation(lblResultado,0.5,0.05,AnchorPos.TopCenter);
+            RelativeLocation(lblResultado, 0.5, 0.05, AnchorPos.TopCenter);
             
             int j = 0, z = 0; string name = ""; string[] indexesResults = new string[4];
             for (int i = 0; i < game.MaxNumberOfCases; i++)
             {
-                name = game.results.Name();
-                indexesResults = game.results.IndexesResults();
+                name = game.results.Name(i);
+                indexesResults = game.results.IndexesResults(i);
 
                 pnlResultCase[i] = new Panel();
                 pnlResultCase[i].Parent = gpbResultBack;

@@ -41,18 +41,17 @@ namespace game
             corrects += cases[counter].correct ? 1 : 0;
             counter++;
         }
-        public string Name()
+        public string Name(int index)
         {
-            return this.cases[counter - 1].caseProject.Name;
+            return this.cases[index].caseProject.Name;
         }
-        public string[] IndexesResults()
+        public string[] IndexesResults(int index)
         {
             string[] ret = new string[] { "Certo", "Certo", "Certo", "Certo" };
-            foreach (int index in this.cases[counter - 1].errors)
+            foreach (int errorIndex in this.cases[index].errors)
             {
-                ret[index] = "Errado";
+                ret[errorIndex] = "Errado";
             }
-            counter--;
             return ret;
         }
 
