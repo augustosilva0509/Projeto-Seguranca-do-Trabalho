@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,7 +12,8 @@ namespace game
     public class Game
     {
         private int maxNumberOfCases = 4;
-        private Project[] projects;
+        private int numberOfProjects;
+        public Project[] projects;
 
         private int timer;
 
@@ -24,15 +26,17 @@ namespace game
         public int MaxNumberOfCases { get => maxNumberOfCases; }
         public int Timer { get => timer; set => timer = value; }
 
-        public Game(int maxTimer)
+        public Game(int maxTimer, int numberOfProjects)
         {
             this.maxTimer = maxTimer;
+            this.numberOfProjects = numberOfProjects;
             this.timer = this.maxTimer;
             this.caseNumber = 1;
             this.results = new Result(maxNumberOfCases);
-            this.projects = new Project[maxNumberOfCases];
+            this.projects = new Project[this.numberOfProjects];
             this.projects = Project.InitializeProjects();
             this.currentCase = Project.GetRandomProject(this.projects, this.caseNumber);
+            
         }
         public void UpdateCase(CheckedListBox clb, bool timesUp = false)
         {
@@ -44,7 +48,7 @@ namespace game
         private int[] GetErrorIndices(CheckedListBox clb, Project project)
         {
             HashSet<int> checkedIndices = new HashSet<int>(clb.CheckedIndices.Cast<int>());
-            HashSet<int> projectIndices = new HashSet<int>(project.checkindexes);
+            HashSet<int> projectIndices = new HashSet<int>(project.CheckIndexes);
 
             checkedIndices.SymmetricExceptWith(projectIndices);
 

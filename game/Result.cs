@@ -43,7 +43,7 @@ namespace game
         }
         public string Name()
         {
-            return this.cases[counter - 1].caseProject.name;
+            return this.cases[counter - 1].caseProject.Name;
         }
         public string[] IndexesResults()
         {

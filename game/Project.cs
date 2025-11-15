@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace game
 {
@@ -24,19 +25,27 @@ namespace game
     }
     public class Project
     {
-        public string name;
-        public int[] checkindexes;
+        private string name;
+        private int[] checkIndexes;
         public bool used;
-        public int p;
-        public int c;
-        public Weight weight;
-        public Risk risk;
-        public string imgName;
+        private int p;
+        private int c;
+        private Weight weight;
+        private Risk risk;
+        private string imgName;
+
+        public string Name { get => name; set => name = value; }
+        public int[] CheckIndexes { get => checkIndexes; set => checkIndexes = value; }
+        public int P { get => p; set => p = value; }
+        public int C { get => c; set => c = value; }
+        public Weight Weight { get => weight; set => weight = value; }
+        public Risk Risk { get => risk; set => risk = value; }
+        public string ImgName { get => imgName; set => imgName = value; }
 
         public Project(string name, int[] checkindexes, int p, int c, Weight weight, Risk risk, string imgName)
         {
             this.name = name;
-            this.checkindexes = checkindexes;
+            this.checkIndexes = checkindexes;
             this.used = false;
             this.p = p;
             this.c = c;
@@ -50,11 +59,11 @@ namespace game
         }
         public static Project[] InitializeProjects()
         {
-            Project[] projects = new Project[4];
-            projects[0] = new Project("Escritório de Contabilidade", new int[] { 0, 1, 3 }, 1, 2, Weight.Small, Risk.Small, "cyan.png");
-            projects[1] = new Project("Escritório A", new int[] { 0, 1, 2, 3 }, 3, 4, Weight.High, Risk.Small, "yellow.png");
-            projects[2] = new Project("Escritório B", new int[] { 2, 3 }, 5, 6, Weight.Medium, Risk.Medium, "pink.png");
-            projects[3] = new Project("Escritório C", new int[] { }, 7, 8, Weight.Small, Risk.High, "blue.png");
+            Project[] projects;
+
+            string jsonString = File.ReadAllText(Main.projectDirectory + "cases\\projects.json");
+            projects = JsonSerializer.Deserialize<Project[]>(jsonString);
+
             return projects;
         }
         public static Project GetRandomProject(Project[] projects, int n)

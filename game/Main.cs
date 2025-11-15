@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -19,7 +20,8 @@ namespace game
 {
     public partial class Main : Form
     {
-        private static string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
+        public static string projectDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\";
+        public int numberOfProjects;
         private int resolution = 720;
         private Game game;
         private Image menu_bg;
@@ -32,16 +34,25 @@ namespace game
             TopLeft,
             TopRight,
             BottomLeft,
-            BottomRight
+            BottomRight,
+            TopCenter,
+            BottomCenter
         }
         public Main()
         {
             InitializeComponent();
+            GetNumberOfProjects();
             menu_bg = Image.FromFile(projectDirectory + $"\\img\\menu_bg.jpeg");
             this.Size = new Size((int)(resolution * 16 / 9 * 1.05), (int)(resolution * 1.01));
             this.MaximizeBox = false;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             MainMenu();
+        }
+        private async void GetNumberOfProjects()
+        {
+            using FileStream openStream = System.IO.File.OpenRead(Main.projectDirectory + "cases\\projects.json");
+            numberOfProjects =
+                (await JsonSerializer.DeserializeAsync<Project[]>(openStream)).Length;
         }
         private void ResetForm()
         {
@@ -117,6 +128,18 @@ namespace game
                     component.Location = new Point(
                         (int)(component.Parent.Size.Width * x + component.Size.Width),
                         (int)(component.Parent.Size.Height * y + component.Size.Height)
+                        );
+                    break;
+                case AnchorPos.TopCenter:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x - component.Size.Width * 0.5),
+                        (int)(component.Parent.Size.Height * y)
+                        );
+                    break;
+                case AnchorPos.BottomCenter:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x - component.Size.Width * 0.5),
+                        (int)(component.Parent.Size.Height * y - component.Size.Width)
                         );
                     break;
             }
@@ -344,7 +367,7 @@ namespace game
         {
             ResetForm();
             SetGameDesign(resolution);
-            game = new Game(30);
+            game = new Game(30, numberOfProjects);
             Label lblDynamicHeaderTimer = GetComponent("lblDynamicHeaderTimer") as Label;
             if (lblDynamicHeaderTimer == null) return;
 
@@ -591,12 +614,12 @@ namespace game
             if (clCaseOptions == null || pictCaseImage == null || lblDynamicHeaderTimer == null || lblStaticHeaderTimer == null || pnlHeaderTitle == null || lblCaseRisk == null || lblCaseWeight == null || lblCaseP == null || lblCaseC == null) return;
 
 
-            pnlHeaderTitle.Text = $"Caso {game.caseNumber} - {game.currentCase.name}";
+            pnlHeaderTitle.Text = $"Caso {game.caseNumber} - {game.currentCase.Name}";
             lblCaseRisk.Text = $"Risco: {game.currentCase.RiskText()}";
             lblCaseWeight.Text = $"Gravidade: {game.currentCase.WeightText()}";
-            lblCaseC.Text = $"Capacidade de Passagem: {game.currentCase.c}";
-            lblCaseP.Text = $"População: {game.currentCase.p}";
-            pictCaseImage.Image = Image.FromFile(projectDirectory + $"\\img\\{game.currentCase.imgName}");
+            lblCaseC.Text = $"Capacidade de Passagem: {game.currentCase.C}";
+            lblCaseP.Text = $"População: {game.currentCase.P}";
+            pictCaseImage.Image = Image.FromFile(projectDirectory + $"img\\{game.currentCase.ImgName}");
             lblStaticHeaderTimer.Text = $"/{game.maxTimer}";
             lblDynamicHeaderTimer.Text = $"{game.maxTimer}";
             while (clCaseOptions.CheckedIndices.Count > 0)
@@ -683,10 +706,10 @@ namespace game
             Label gpbResultBorder = new Label();
             Label lblResultado = new Label();
 
-            Panel[] pnlResultCase = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
-            Panel[] pnlResultCaseBack = new Panel[4] { new Panel(), new Panel(), new Panel(), new Panel() };
-            Label[] lblCaseName = new Label[4] { new Label(), new Label(), new Label(), new Label() };
-            Label[] lblTextos = new Label[4] { new Label(), new Label(), new Label(), new Label() };
+            Panel[] pnlResultCase = new Panel[game.MaxNumberOfCases];
+            Panel[] pnlResultCaseBack = new Panel[game.MaxNumberOfCases];
+            Label[] lblCaseName = new Label[game.MaxNumberOfCases];
+            Label[] lblTextos = new Label[game.MaxNumberOfCases];
             Button btnBack = new Button();
 
             
@@ -716,29 +739,33 @@ namespace game
             gpbResultBack.Text = "";
 
             lblResultado.Parent = gpbResult;
+            lblResultado.AutoSize = true;
             lblResultado.Text = $"Resultado final {game.results.corrects}/{game.MaxNumberOfCases}";
             lblResultado.Font = new Font("Arial", (int)(resolution * 0.05), FontStyle.Bold);
             lblResultado.BackColor = Color.Transparent;
             lblResultado.ForeColor = Color.FromArgb(228, 60, 60);
-            lblResultado.AutoSize = true;
-            lblResultado.Location = new Point((int)(gpbResult.Size.Width * 0.5 - lblResultado.Size.Width * 0.5), (int)(gpbResult.Size.Height * 0.05));
+            RelativeLocation(lblResultado,0.5,0.05,AnchorPos.TopCenter);
+            
             int j = 0, z = 0; string name = ""; string[] indexesResults = new string[4];
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < game.MaxNumberOfCases; i++)
             {
                 name = game.results.Name();
                 indexesResults = game.results.IndexesResults();
 
+                pnlResultCase[i] = new Panel();
                 pnlResultCase[i].Parent = gpbResultBack;
                 pnlResultCase[i].Location = new Point((int)(j), (int)(gpbResultBack.Size.Height * 0.2 + z));
                 RelativeSize(pnlResultCase[i], 0.5, 0.3);
                 pnlResultCase[i].BackColor = Color.FromArgb(217, 217, 217);
 
+                pnlResultCaseBack[i] = new Panel();
                 pnlResultCaseBack[i].Parent = pnlResultCase[i];
                 pnlResultCaseBack[i].BackColor = Color.FromArgb(217, 217, 217);
                 RelativeSize(pnlResultCaseBack[i], 1, 1);
                 RelativeLocation(pnlResultCaseBack[i], 0.5, 0.5);
                 pnlResultCaseBack[i].Text = "";
 
+                lblCaseName[i] = new Label();
                 lblCaseName[i].Parent = pnlResultCaseBack[i];
                 lblCaseName[i].BackColor = Color.Transparent;
                 lblCaseName[i].ForeColor = Color.Black;
@@ -746,8 +773,8 @@ namespace game
                 lblCaseName[i].Text = $"{name}";
                 lblCaseName[i].Font = new Font("Arial", (int)(resolution * 0.02), FontStyle.Bold);
                 lblCaseName[i].Location = new Point((int)(pnlResultCase[i].Size.Width * 0.5 - lblCaseName[i].Size.Width * 0.5), (int)(pnlResultCase[i].Size.Height * 0.1));
-                
 
+                lblTextos[i] = new Label();
                 lblTextos[i].Parent = pnlResultCaseBack[i];
                 lblTextos[i].BackColor = Color.Transparent;
                 lblTextos[i].ForeColor = Color.Black;
