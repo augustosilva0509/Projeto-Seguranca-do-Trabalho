@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace game
 {
-    public enum Weight
+    public enum Gravity
     {
         Null,
         Small,
@@ -30,7 +30,7 @@ namespace game
         public bool used;
         private int p;
         private int c;
-        private Weight weight;
+        private Gravity gravity;
         private Risk risk;
         private string imgName;
 
@@ -38,24 +38,24 @@ namespace game
         public int[] CheckIndexes { get => checkIndexes; set => checkIndexes = value; }
         public int P { get => p; set => p = value; }
         public int C { get => c; set => c = value; }
-        public Weight Weight { get => weight; set => weight = value; }
+        public Gravity Gravity { get => gravity; set => gravity = value; }
         public Risk Risk { get => risk; set => risk = value; }
         public string ImgName { get => imgName; set => imgName = value; }
 
-        public Project(string name, int[] checkindexes, int p, int c, Weight weight, Risk risk, string imgName)
+        public Project(string name, int[] checkindexes, int p, int c, Gravity gravity, Risk risk, string imgName)
         {
             this.name = name;
             this.checkIndexes = checkindexes;
             this.used = false;
             this.p = p;
             this.c = c;
-            this.weight = weight;
+            this.gravity = gravity;
             this.risk = risk;
             this.imgName = imgName;
         }
         private static Project Null()
         {
-            return new Project("Nulo", new int[] { -1 }, 0, 0, Weight.Null, Risk.Null, "black.png");
+            return new Project("Nulo", new int[] { -1 }, 0, 0, Gravity.Null, Risk.Null, "black.png");
         }
         public static Project[] InitializeProjects()
         {
@@ -104,17 +104,17 @@ namespace game
                     return "";
             }
         }
-        public string WeightText()
+        public string GravityText()
         {
-            switch (this.weight)
+            switch (this.gravity)
             {
-                case Weight.Null:
-                    return "Nulo";
-                case Weight.Small:
-                    return "Pequeno";
-                case Weight.Medium:
-                    return "Médio";
-                case Weight.High:
+                case Gravity.Null:
+                    return "Nula";
+                case Gravity.Small:
+                    return "Pequena";
+                case Gravity.Medium:
+                    return "Média";
+                case Gravity.High:
                     return "Grande";
                 default:
                     return "";

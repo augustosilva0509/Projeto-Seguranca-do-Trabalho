@@ -615,7 +615,7 @@ namespace game
 
             pnlHeaderTitle.Text = $"Caso {game.caseNumber} - {game.currentCase.Name}";
             lblCaseRisk.Text = $"Risco: {game.currentCase.RiskText()}";
-            lblCaseWeight.Text = $"Gravidade: {game.currentCase.WeightText()}";
+            lblCaseWeight.Text = $"Gravidade: {game.currentCase.GravityText()}";
             lblCaseC.Text = $"Capacidade de Passagem: {game.currentCase.C}";
             lblCaseP.Text = $"População: {game.currentCase.P}";
             pictCaseImage.Image = Image.FromFile(projectDirectory + $"img\\{game.currentCase.ImgName}");
