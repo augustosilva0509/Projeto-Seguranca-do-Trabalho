@@ -56,7 +56,7 @@ namespace game
         }
         private void ResetForm()
         {
-            Form currentForm = Form.ActiveForm;
+            Form currentForm = this;
             if (currentForm == null) return;
             for (int i = currentForm.Controls.Count - 1; i >= 0; i--)
             {
@@ -64,9 +64,9 @@ namespace game
             }
             currentForm.Cursor = Cursors.Default;
         }
-        public static Control GetComponent(string name)
+        private Control GetComponent(string name)
         {
-            Form currentForm = Form.ActiveForm;
+            Form currentForm = this;
             if (currentForm == null) return null;
             if (currentForm.Controls.Find(name, true).Count() == 0) return null;
             return currentForm.Controls.Find(name, true).First();
@@ -325,11 +325,11 @@ namespace game
 
             lblHowToPlayText.Parent = pnlHowToPlay;
             lblHowToPlayText.Font = new Font("Arial", (int)(pnlHowToPlay.Size.Height * 0.02), FontStyle.Bold);
-            lblHowToPlayText.Text = "" +
-                "Um jogador estará com o Manual do Guardião das Regras em mãos, e os outros\njogadores estarão vendo os casos.\r\n\r\n" +
-                "Um não deve conseguir ver o que o outro está fazendo!\r\n\r\nEm cada caso será dada uma planta arquitetônica e algumas informações extras\nsobre a planta em questão. Também, à direita, serão dadas quatro opções, que\nsão elas: \"Extintores de incêndio\", \"Saídas de emergência\", \"Rotas de fuga\" e\n\"Alarmes de incêndio\"." +
-                "\r\n\r\nVocê deverá marcar essas opções de acordo com as regras do Manual do\nGuardião das Regras, que estará sendo lido pelo seu companheiro de equipe.\r\n\r\nVocês terão trinta segundos para resolver cada caso, que se não responderem à\ntempo será entregue o que já fizeram. Portanto, comunicação objetiva e\neficiente é essencial!";
+            lblHowToPlayText.Text = 
+                "Um jogador estará com o Manual do Guardião das Regras em mãos, e os outros jogadores estarão vendo os casos.\r\n\r\nUm não deve conseguir ver o que o outro está fazendo!\r\n\r\nEm cada caso será dada uma planta arquitetônica e algumas informações extras sobre a planta em questão. Também, à direita, serão dadas quatro opções, que são elas: \"Extintores de incêndio\", \"Saídas de emergência\", \"Rotas de fuga\" e \"Alarmes de incêndio\".\r\n\r\nVocê deverá marcar essas opções de acordo com as regras do Manual do Guardião das Regras, que estará sendo lido pelo seu companheiro de equipe.\r\n\r\nVocês terão trinta segundos para resolver cada caso, que se não responderem à tempo será entregue o que já fizeram. Portanto, comunicação objetiva e eficiente é essencial!"
+                ;
             lblHowToPlayText.AutoSize = true;
+            lblHowToPlayText.MaximumSize = new Size((int)(pnlHowToPlay.Width * 0.8), 0);
             lblHowToPlayText.BackColor = Color.FromArgb(217, 217, 217);
             lblHowToPlayText.ForeColor = Color.FromArgb(228, 100, 100);
             RelativeLocation(lblHowToPlayText, 0.5, 0.5);
@@ -354,7 +354,6 @@ namespace game
             pnlGameFog.Controls.Add(pnlHowToPlay);
             this.Controls.Add(pnlGameFog);
             pnlGameFog.BringToFront();
-            ActiveForm.ResumeLayout(false);
         }
         private void HowToPlayBack_Click(object sender, EventArgs e)
         {
@@ -367,7 +366,7 @@ namespace game
         {
             ResetForm();
             SetGameDesign(resolution);
-            game = new Game(30, numberOfProjects);
+            game = new Game(3, numberOfProjects);
             Label lblDynamicHeaderTimer = GetComponent("lblDynamicHeaderTimer") as Label;
             if (lblDynamicHeaderTimer == null) return;
 
