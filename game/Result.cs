@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -53,6 +54,12 @@ namespace game
                 ret[errorIndex] = "Errado";
             }
             return ret;
+        }
+        public static Result BestResult(Result oldResult, Result newResult)
+        {
+            if (oldResult.corrects < newResult.corrects)
+                return newResult;
+            return oldResult;
         }
 
     }
