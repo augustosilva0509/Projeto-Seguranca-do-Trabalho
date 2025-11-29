@@ -882,7 +882,7 @@ namespace game
                     var worksheet = workbook.Worksheets.Add("Resultados");
                     worksheet.Cell(1, 1).Value = "Nome";
                     worksheet.Cell(1, 2).Value = "Resultado";
-                    worksheet.Cell(2, 1).Value = "player";
+                    worksheet.Cell(2, 1).Value = "player"; // Colocar o valor do código de identificação da equipe, ou nome, ou sla
                     worksheet.Cell(2, 2).Value = game.results.corrects;
                     workbook.SaveAs(projectDirectory + "results\\results.xlsx");
                 }
@@ -897,7 +897,7 @@ namespace game
                     while (!worksheet.Cell(i, 1).Value.Equals(Blank.Value))
                         i++;
 
-                    worksheet.Cell(i, 1).Value = "player";
+                    worksheet.Cell(i, 1).Value = "player"; // Colocar o valor do código de identificação da equipe, ou nome, ou sla
                     worksheet.Cell(i, 2).Value = bestResult.corrects;
                     workbook.SaveAs(projectDirectory + "results\\results.xlsx");
                 }
