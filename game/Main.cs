@@ -1,6 +1,4 @@
-﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,6 +26,7 @@ namespace game
         private bool resultSent = false;
         private const int maxAttempts = 3;
         private int attempts = 0;
+        private string teamGameCode;
         private Result bestResult;
         private Game game;
         private Image menu_bg;
@@ -162,7 +161,9 @@ namespace game
         {
             if (attempts != 0 && resultSent == false)
             {
-                SendResult();
+                ServerCalls.SendResult(bestResult, teamGameCode);
+                resultSent = true;
+                Application.Exit();
             }
         }
         #region MainMenu
@@ -271,7 +272,7 @@ namespace game
         }
         private void MenuStart_MouseClick(object sender, MouseEventArgs e)
         {
-            MainGame();
+            GameAuth();
         }
         private void MenuHowToPlay_MouseClick(object sender, MouseEventArgs e)
         {
@@ -381,9 +382,88 @@ namespace game
         }
         #endregion
 
+        #region GameAuth
+        private void GameAuth()
+        {
+            ResetForm();
+            SetGameAuth(resolution);
+        }
+        private void SetGameAuth(int resolution)
+        {
+            Panel pnlAuth = new Panel();
+            Panel pnlAuthBorder = new Panel();
+            Label lblAuth = new Label();
+            TextBox txtAuth = new TextBox();
+            Button btnAuth = new Button();
+
+            pnlAuthBorder.Parent = this;
+            RelativeSize(pnlAuthBorder, 0.3125, 0.3125);
+            RelativeLocation(pnlAuthBorder, 0.5, 0.5);
+            pnlAuthBorder.BackColor = System.Drawing.Color.FromArgb(228, 87, 87);
+
+            pnlAuth.Parent = pnlAuthBorder;
+            RelativeSize(pnlAuth, 0.903125, 0.85);
+            RelativeLocation(pnlAuth, 0.5, 0.5);
+            pnlAuth.BackColor = System.Drawing.Color.FromArgb(217, 217, 217);
+
+            lblAuth.Parent = pnlAuth;
+            lblAuth.AutoSize = true;
+            lblAuth.Text = $"Código de acesso";
+            lblAuth.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.03), FontStyle.Bold);
+            lblAuth.BackColor = System.Drawing.Color.Transparent;
+            lblAuth.ForeColor = System.Drawing.Color.FromArgb(228, 60, 60);
+            RelativeLocation(lblAuth, 0.5, 0.05, AnchorPos.TopCenter);
+
+            txtAuth.Parent = pnlAuth;
+            txtAuth.Name = "txtAuth";
+            RelativeLocation(txtAuth, 0.5, 0.5);
+            txtAuth.TextAlign = HorizontalAlignment.Center;
+
+            btnAuth.Parent = pnlAuth;
+            RelativeSize(btnAuth, 0.2, 0.15);
+            RelativeLocation(btnAuth, 0.5, 0.90);
+            btnAuth.BackColor = System.Drawing.Color.FromArgb(107, 200, 118);
+            btnAuth.FlatStyle = FlatStyle.Flat;
+            btnAuth.FlatAppearance.BorderSize = 0;
+            btnAuth.Font = new System.Drawing.Font("Arial", (float)(resolution * 0.015), FontStyle.Bold);
+            btnAuth.Text = "Entrar";
+            btnAuth.Click += Auth_Click;
+
+            pnlAuth.Controls.Add(btnAuth);
+            pnlAuth.Controls.Add(txtAuth);
+            pnlAuth.Controls.Add(lblAuth);
+            pnlAuthBorder.Controls.Add(pnlAuth);
+            this.Controls.Add(pnlAuthBorder);
+
+        }
+        private void Auth_Click(object? sender, EventArgs e)
+        {
+            TextBox txtAuth = GetComponent("txtAuth") as TextBox;
+            CodeCheck(txtAuth.Text);
+        }
+        private void CodeCheck(string teamCode)
+        {
+            try
+            {
+                ServerCalls.CheckCode(teamCode);
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType().Equals(new ArgumentException().GetType()))
+                    MessageBox.Show("Essa equipe já enviou um resultado!");
+                else if (ex.GetType().Equals(new ArgumentOutOfRangeException().GetType()))
+                    MessageBox.Show("Esse código de equipe não existe");
+                return;
+            }
+            teamGameCode = teamCode;
+            MainGame();
+        }
+        #endregion
+
         #region MainGame
         private void MainGame()
         {
+            MessageBox.Show(teamGameCode);
             ResetForm();
             SetGameDesign(resolution);
             game = new Game(30, numberOfProjects);
@@ -866,42 +946,9 @@ namespace game
         {
             MainGame();
         }
-
         private void ResultBack_Click(object sender, EventArgs e)
         {
-            SendResult();
-            MainMenu();
-        }
-
-        private void SendResult()
-        {
-            if (!System.IO.File.Exists(projectDirectory + "results\\results.xlsx"))
-            {
-                using (var workbook = new XLWorkbook())
-                {
-                    var worksheet = workbook.Worksheets.Add("Resultados");
-                    worksheet.Cell(1, 1).Value = "Nome";
-                    worksheet.Cell(1, 2).Value = "Resultado";
-                    worksheet.Cell(2, 1).Value = "player"; // Colocar o valor do código de identificação da equipe, ou nome, ou sla
-                    worksheet.Cell(2, 2).Value = game.results.corrects;
-                    workbook.SaveAs(projectDirectory + "results\\results.xlsx");
-                }
-            }
-            else
-            {
-                using (var workbook = new XLWorkbook(projectDirectory + "results\\results.xlsx"))
-                {
-
-                    var worksheet = workbook.Worksheets.Worksheet("Resultados");
-                    int i = 1;
-                    while (!worksheet.Cell(i, 1).Value.Equals(Blank.Value))
-                        i++;
-
-                    worksheet.Cell(i, 1).Value = "player"; // Colocar o valor do código de identificação da equipe, ou nome, ou sla
-                    worksheet.Cell(i, 2).Value = bestResult.corrects;
-                    workbook.SaveAs(projectDirectory + "results\\results.xlsx");
-                }
-            }
+            ServerCalls.SendResult(bestResult, teamGameCode);
             resultSent = true;
             Application.Exit();
         }
