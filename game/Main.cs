@@ -42,7 +42,8 @@ namespace game
             BottomRight,
             TopCenter,
             BottomCenter,
-            CenterRight
+            CenterRight,
+            CenterLeft
         }
         public Main()
         {
@@ -155,16 +156,18 @@ namespace game
                         (int)(component.Parent.Size.Height * y + component.Size.Width * 0.5)
                         );
                     break;
+                case AnchorPos.CenterLeft:
+                    component.Location = new Point(
+                        (int)(component.Parent.Size.Width * x),
+                        (int)(component.Parent.Size.Height * y + component.Size.Width * 0.5)
+                        );
+                    break;
             }
         }
         private void Form_Close(object? sender, FormClosingEventArgs e)
         {
             if (attempts != 0 && resultSent == false)
-            {
                 ServerCalls.SendResult(bestResult, teamGameCode);
-                resultSent = true;
-                Application.Exit();
-            }
         }
         #region MainMenu
         private void MainMenu()
@@ -346,13 +349,11 @@ namespace game
 
             lblHowToPlayText.Parent = pnlHowToPlay;
             lblHowToPlayText.Font = new System.Drawing.Font("Arial", (int)(pnlHowToPlay.Size.Height * 0.02), FontStyle.Bold);
-            lblHowToPlayText.Text = 
-                "Um jogador estará com o Manual do Guardião das Regras em mãos, e os outros jogadores estarão vendo os casos.\r\n\r\nUm não deve conseguir ver o que o outro está fazendo!\r\n\r\nEm cada caso será dada uma planta arquitetônica e algumas informações extras sobre a planta em questão. Também, à direita, serão dadas quatro opções, que são elas: \"Extintores de incêndio\", \"Saídas de emergência\", \"Rotas de fuga\" e \"Alarmes de incêndio\".\r\n\r\nVocê deverá marcar essas opções de acordo com as regras do Manual do Guardião das Regras, que estará sendo lido pelo seu companheiro de equipe.\r\n\r\nVocês terão trinta segundos para resolver cada caso, que se não responderem à tempo será entregue o que já fizeram. Portanto, comunicação objetiva e eficiente é essencial!"
-                ;
+            lblHowToPlayText.Text = "Um jogador estará com o Manual do Guardião das Regras em mãos, e os outros jogadores estarão vendo os casos.\r\n\r\nUm não deve conseguir ver o que o outro está fazendo!\r\n\r\nEm cada caso será dada uma planta arquitetônica e algumas informações extras sobre a planta em questão. Também, à direita, serão dadas quatro opções, que são elas: \"Extintores de incêndio\", \"Saídas de emergência\", \"Rotas de fuga\" e \"Alarmes de incêndio\".\r\n\r\nVocê deverá marcar essas opções de acordo com as regras do Manual do Guardião das Regras, que estará sendo lido pelo seu companheiro de equipe.\r\n\r\nVocês terão trinta segundos para resolver cada caso e três chances de jogar o melhor que conseguirem.\r\n\r\nSe não responderem algum caso à tempo será entregue o que já responderam. Portanto, comunicação objetiva e eficiente é essencial!";
             lblHowToPlayText.AutoSize = true;
             lblHowToPlayText.MaximumSize = new Size((int)(pnlHowToPlay.Width * 0.8), 0);
             lblHowToPlayText.BackColor = System.Drawing.Color.FromArgb(217, 217, 217);
-            lblHowToPlayText.ForeColor = System.Drawing.Color.FromArgb(228, 100, 100);
+            lblHowToPlayText.ForeColor = System.Drawing.Color.FromArgb(0, 0, 0);
             RelativeLocation(lblHowToPlayText, 0.5, 0.5);
 
             btnHowToPlayBack.Parent = pnlHowToPlay;
@@ -434,7 +435,6 @@ namespace game
             pnlAuth.Controls.Add(lblAuth);
             pnlAuthBorder.Controls.Add(pnlAuth);
             this.Controls.Add(pnlAuthBorder);
-
         }
         private void Auth_Click(object? sender, EventArgs e)
         {
@@ -463,7 +463,6 @@ namespace game
         #region MainGame
         private void MainGame()
         {
-            MessageBox.Show(teamGameCode);
             ResetForm();
             SetGameDesign(resolution);
             game = new Game(30, numberOfProjects);
@@ -637,9 +636,15 @@ namespace game
 
             #region pnlCenter
             Panel pnlCenter = new Panel();
-            Label pnlCenterBack = new Label();
             PictureBox pictCaseImage = new PictureBox();
             Label lblCaseImageDesc = new Label();
+            Panel pnlSub = new Panel();
+            PictureBox pictSubExit = new PictureBox();
+            Label lblSubExit = new Label();
+            PictureBox pictSubAlarm = new PictureBox();
+            Label lblSubAlarm = new Label();
+            PictureBox pictSubExtinguisher = new PictureBox();
+            Label lblSubExtinguisher = new Label();
 
             pnlCenter.Parent = this;
             pnlCenter.Name = "pnlCenter";
@@ -647,19 +652,12 @@ namespace game
             RelativeLocation(pnlCenter, 0.35, 0.575);
             pnlCenter.BackColor = System.Drawing.Color.Transparent;
 
-            pnlCenterBack.Parent = pnlCenter;
-            pnlCenterBack.AutoSize = false;
-            RelativeSize(pnlCenterBack);
-            RelativeLocation(pnlCenterBack, 0.5, 0.5);
-            pnlCenterBack.BackColor = System.Windows.Forms.Control.DefaultBackColor;
-            pnlCenterBack.Text = "";
-
-            pictCaseImage.Parent = pnlCenterBack;
+            pictCaseImage.Parent = pnlCenter;
             pictCaseImage.Name = "pictCaseImage";
             RelativeSize(pictCaseImage, 0.9677, 0.845);
             RelativeLocation(pictCaseImage, 0, 0, AnchorPos.TopLeft);
 
-            lblCaseImageDesc.Parent = pnlCenterBack;
+            lblCaseImageDesc.Parent = pnlCenter;
             lblCaseImageDesc.Name = "lblCaseImageDesc";
             lblCaseImageDesc.AutoSize = false;
             RelativeSize(lblCaseImageDesc, 0.4516, 0.0704);
@@ -669,12 +667,73 @@ namespace game
             lblCaseImageDesc.BackColor = System.Drawing.Color.Transparent;
             lblCaseImageDesc.ForeColor = System.Drawing.Color.Black;
             lblCaseImageDesc.TextAlign = ContentAlignment.MiddleLeft;
+
+            pnlSub.Parent = pnlCenter;
+            RelativeSize(pnlSub, 0.642, 0.0704);
+            RelativeLocation(pnlSub, 0.83, 0.9084);
+            pnlSub.BackColor = System.Drawing.Color.Transparent;
+            pnlSub.Text = "";
+
+            pictSubExit.Parent = pnlSub;
+            RelativeSize(pictSubExit, 0.07, 1);
+            RelativeLocation(pictSubExit, 0.035, 0.5);
+            pictSubExit.Image = Image.FromFile(projectDirectory + "\\img\\subExit.jpeg");
+            pictSubExit.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            lblSubExit.Parent = pnlSub;
+            lblSubExit.AutoSize = false;
+            RelativeSize(lblSubExit, 0.2, 1);
+            RelativeLocation(lblSubExit, 0.175, 0.5);
+            lblSubExit.Text = "Saída";
+            lblSubExit.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
+            lblSubExit.BackColor = System.Drawing.Color.Transparent;
+            lblSubExit.ForeColor = System.Drawing.Color.Black;
+            lblSubExit.TextAlign = ContentAlignment.MiddleLeft;
+            
+
+            pictSubAlarm.Parent = pnlSub;
+            RelativeSize(pictSubAlarm, 0.07, 1);
+            RelativeLocation(pictSubAlarm, 0.27, 0.5);
+            pictSubAlarm.Image = Image.FromFile(projectDirectory + "\\img\\subAlarm.jpeg");
+            pictSubAlarm.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            lblSubAlarm.Parent = pnlSub;
+            lblSubAlarm.AutoSize = false;
+            RelativeSize(lblSubAlarm, 0.2, 1);
+            RelativeLocation(lblSubAlarm, 0.41, 0.5);
+            lblSubAlarm.Text = "Alarme";
+            lblSubAlarm.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
+            lblSubAlarm.BackColor = System.Drawing.Color.Transparent;
+            lblSubAlarm.ForeColor = System.Drawing.Color.Black;
+            lblSubAlarm.TextAlign = ContentAlignment.MiddleLeft;
+
+            pictSubExtinguisher.Parent = pnlSub;
+            RelativeSize(pictSubExtinguisher, 0.07, 1);
+            RelativeLocation(pictSubExtinguisher, 0.525, 0.5);
+            pictSubExtinguisher.Image = Image.FromFile(projectDirectory + "\\img\\subExtinguisher.jpeg");
+            pictSubExtinguisher.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            lblSubExtinguisher.Parent = pnlSub;
+            lblSubExtinguisher.AutoSize = false;
+            RelativeSize(lblSubExtinguisher, 0.2, 1);
+            RelativeLocation(lblSubExtinguisher, 0.665, 0.5);
+            lblSubExtinguisher.Text = "Extintor";
+            lblSubExtinguisher.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
+            lblSubExtinguisher.BackColor = System.Drawing.Color.Transparent;
+            lblSubExtinguisher.ForeColor = System.Drawing.Color.Black;
+            lblSubExtinguisher.TextAlign = ContentAlignment.MiddleLeft;
             #endregion
 
             #region Controls
-            pnlCenterBack.Controls.Add(pictCaseImage);
-            pnlCenterBack.Controls.Add(lblCaseImageDesc);
-            pnlCenter.Controls.Add(pnlCenterBack);
+            pnlSub.Controls.Add(lblSubExtinguisher);
+            pnlSub.Controls.Add(pictSubExtinguisher);
+            pnlSub.Controls.Add(lblSubAlarm);
+            pnlSub.Controls.Add(pictSubAlarm);
+            pnlSub.Controls.Add(lblSubExit);
+            pnlSub.Controls.Add(pictSubExit);
+            pnlCenter.Controls.Add(pnlSub);
+            pnlCenter.Controls.Add(pictCaseImage);
+            pnlCenter.Controls.Add(lblCaseImageDesc);
 
             pnlRBarFormBack.Controls.Add(clCaseOptions);
             pnlRBarFormBack.Controls.Add(lblCaseC);
