@@ -36,7 +36,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Name = "Main";
-            Text = "Guardiões das Regras";
+            Text = "Apagadores de Chamas";
             ResumeLayout(false);
         }
 

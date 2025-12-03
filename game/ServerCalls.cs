@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace game
 {
-    public class ServerCalls
+    public static class ServerCalls
     {
         private static string serverDirectory = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\server\\";
         public static void CheckCode(string teamCode)

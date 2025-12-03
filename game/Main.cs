@@ -200,17 +200,17 @@ namespace game
             pnlMenu.BackColor = System.Drawing.Color.Transparent;
 
             lblMenuTitleBorder.Parent = pnlMenu;
-            lblMenuTitleBorder.Text = "Guardiões das Regras";
+            lblMenuTitleBorder.Text = "Apagadores de Chamas";
             lblMenuTitleBorder.Font = new System.Drawing.Font("Arial", (int)(pnlMenu.Size.Height * 0.100), FontStyle.Bold);
             lblMenuTitleBorder.AutoSize = true;
-            RelativeLocation(lblMenuTitleBorder, 0.5, 0.18); //0.5,033
+            RelativeLocation(lblMenuTitleBorder, 0.5, 0.18);
             lblMenuTitleBorder.ForeColor = System.Drawing.Color.Black;
             lblMenuTitleBorder.BackColor = System.Drawing.Color.Transparent;
             lblMenuTitleBorder.Visible = true;
             lblMenuTitleBorder.Enabled = true;
 
             lblMenuTitle.Parent = lblMenuTitleBorder;
-            lblMenuTitle.Text = "Guardiões das Regras";
+            lblMenuTitle.Text = lblMenuTitleBorder.Text;
             lblMenuTitle.Font = new System.Drawing.Font("Arial", (int)(pnlMenu.Size.Height * 0.098), FontStyle.Bold);
             lblMenuTitle.AutoSize = true;
             RelativeLocation(lblMenuTitle, 0.5, 0.5);
@@ -224,7 +224,7 @@ namespace game
             lblMenuStart.Text = "Iniciar";
             lblMenuStart.Font = new System.Drawing.Font("Arial", (int)(pnlMenu.Size.Height * 0.04), FontStyle.Bold);
             lblMenuStart.AutoSize = true;
-            RelativeLocation(lblMenuStart, 0.225, 0.45); //0.5,0.45
+            RelativeLocation(lblMenuStart, 0.225, 0.45);
             lblMenuStart.ForeColor = System.Drawing.Color.FromArgb(238, 60, 60);
             lblMenuStart.BackColor = System.Drawing.Color.Transparent;
             lblMenuStart.MouseEnter += LabelMenu_MouseEnter;
@@ -238,7 +238,7 @@ namespace game
             lblMenuHowToPlay.Text = "Como Jogar";
             lblMenuHowToPlay.Font = new System.Drawing.Font("Arial", (int)(pnlMenu.Size.Height * 0.04), FontStyle.Bold);
             lblMenuHowToPlay.AutoSize = true;
-            RelativeLocation(lblMenuHowToPlay, 0.225, 0.52); //0.5,0.55
+            RelativeLocation(lblMenuHowToPlay, 0.225, 0.52);
             lblMenuHowToPlay.ForeColor = System.Drawing.Color.FromArgb(238, 60, 60);
             lblMenuHowToPlay.BackColor = System.Drawing.Color.Transparent;
             lblMenuHowToPlay.MouseEnter += LabelMenu_MouseEnter;
@@ -252,7 +252,7 @@ namespace game
             lblMenuExit.Text = "Sair";
             lblMenuExit.Font = new System.Drawing.Font("Arial", (int)(pnlMenu.Size.Height * 0.04), FontStyle.Bold);
             lblMenuExit.AutoSize = true;
-            RelativeLocation(lblMenuExit, 0.225, 0.59); // 0.5,0.65
+            RelativeLocation(lblMenuExit, 0.225, 0.59);
             lblMenuExit.ForeColor = System.Drawing.Color.FromArgb(238, 60, 60);
             lblMenuExit.BackColor = System.Drawing.Color.Transparent;
             lblMenuExit.MouseEnter += LabelMenu_MouseEnter;
@@ -629,6 +629,7 @@ namespace game
             Panel pnlCenter = new Panel();
             PictureBox pictCaseImage = new PictureBox();
             Label lblCaseImageDesc = new Label();
+            Label lblCaseImageDescCopy = new Label();
             Panel pnlSub = new Panel();
             PictureBox pictSubExit = new PictureBox();
             Label lblSubExit = new Label();
@@ -639,6 +640,8 @@ namespace game
             Label pictSubDimensionsFrame = new Label();
             Label pictSubDimensions = new Label();
             Label lblSubDimensions = new Label();
+            Label pictSubDoors = new Label();
+            Label lblSubDoors = new Label();
 
             pnlCenter.Parent = this;
             pnlCenter.Name = "pnlCenter";
@@ -650,34 +653,46 @@ namespace game
             pictCaseImage.Name = "pictCaseImage";
             RelativeSize(pictCaseImage, 0.9677, 0.845);
             RelativeLocation(pictCaseImage, 0, 0, AnchorPos.TopLeft);
+            pictCaseImage.SizeMode = PictureBoxSizeMode.StretchImage;
 
-            lblCaseImageDesc.Parent = pnlCenter;
+            lblCaseImageDesc.Parent = this;
             lblCaseImageDesc.Name = "lblCaseImageDesc";
             lblCaseImageDesc.AutoSize = false;
-            RelativeSize(lblCaseImageDesc, 0.4516, 0.0704);
-            RelativeLocation(lblCaseImageDesc, 0.2258, 0.9084);
-            lblCaseImageDesc.Text = "Estado do projeto: Reprovado";
-            lblCaseImageDesc.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
+            RelativeSize(lblCaseImageDesc, 0.28, 0.05);
+            RelativeLocation(lblCaseImageDesc, 0.3, 0.195); // posição lendária
+            lblCaseImageDesc.Text = "Reprovado";
+            lblCaseImageDesc.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.015), FontStyle.Bold);
             lblCaseImageDesc.BackColor = System.Drawing.Color.Transparent;
-            lblCaseImageDesc.ForeColor = System.Drawing.Color.Black;
+            lblCaseImageDesc.ForeColor = System.Drawing.Color.Red;
             lblCaseImageDesc.TextAlign = ContentAlignment.MiddleLeft;
 
+            lblCaseImageDescCopy.Parent = this;
+            lblCaseImageDescCopy.AutoSize = false;
+            RelativeSize(lblCaseImageDescCopy, 0.105, 0.056);
+            RelativeLocation(lblCaseImageDescCopy, 0.1075, 0.195); // posição lendária
+            lblCaseImageDescCopy.Text = "Estado do projeto:";
+            lblCaseImageDescCopy.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.015), FontStyle.Bold);
+            lblCaseImageDescCopy.BackColor = System.Drawing.Color.Transparent;
+            lblCaseImageDescCopy.ForeColor = System.Drawing.Color.Black;
+            lblCaseImageDescCopy.TextAlign = ContentAlignment.MiddleLeft;
+
+
             pnlSub.Parent = pnlCenter;
-            RelativeSize(pnlSub, 0.642, 0.0704);
-            RelativeLocation(pnlSub, 0.66, 0.9084);
+            RelativeSize(pnlSub, 1, 0.0704);
+            RelativeLocation(pnlSub, 0.5, 0.9084);
             pnlSub.BackColor = System.Drawing.Color.Transparent;
             pnlSub.Text = "";
 
             pictSubExit.Parent = pnlSub;
-            RelativeSize(pictSubExit, 0.07, 1);
-            RelativeLocation(pictSubExit, 0.065, 0.5);
+            RelativeSize(pictSubExit, 0.0462, 1);
+            RelativeLocation(pictSubExit, 0.0231, 0.5);
             pictSubExit.Image = Image.FromFile(projectDirectory + "\\img\\subExit.jpeg");
             pictSubExit.SizeMode = PictureBoxSizeMode.StretchImage;
 
             lblSubExit.Parent = pnlSub;
             lblSubExit.AutoSize = false;
-            RelativeSize(lblSubExit, 0.2, 1);
-            RelativeLocation(lblSubExit, 0.205, 0.5);
+            RelativeSize(lblSubExit, 0.132, 1);
+            RelativeLocation(lblSubExit, 0.13, 0.5); //+0.1069
             lblSubExit.Text = "Saída";
             lblSubExit.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
             lblSubExit.BackColor = System.Drawing.Color.Transparent;
@@ -685,15 +700,15 @@ namespace game
             lblSubExit.TextAlign = ContentAlignment.MiddleLeft;
 
             pictSubAlarm.Parent = pnlSub;
-            RelativeSize(pictSubAlarm, 0.07, 1);
-            RelativeLocation(pictSubAlarm, 0.28, 0.5);
+            RelativeSize(pictSubAlarm, 0.0462, 1);
+            RelativeLocation(pictSubAlarm, 0.2, 0.5); //+0.07
             pictSubAlarm.Image = Image.FromFile(projectDirectory + "\\img\\subAlarm.jpeg");
             pictSubAlarm.SizeMode = PictureBoxSizeMode.StretchImage;
 
             lblSubAlarm.Parent = pnlSub;
             lblSubAlarm.AutoSize = false;
-            RelativeSize(lblSubAlarm, 0.2, 1);
-            RelativeLocation(lblSubAlarm, 0.42, 0.5);
+            RelativeSize(lblSubAlarm, 0.132, 1);
+            RelativeLocation(lblSubAlarm, 0.3069, 0.5);
             lblSubAlarm.Text = "Alarme";
             lblSubAlarm.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
             lblSubAlarm.BackColor = System.Drawing.Color.Transparent;
@@ -701,15 +716,15 @@ namespace game
             lblSubAlarm.TextAlign = ContentAlignment.MiddleLeft;
 
             pictSubExtinguisher.Parent = pnlSub;
-            RelativeSize(pictSubExtinguisher, 0.07, 1);
-            RelativeLocation(pictSubExtinguisher, 0.525, 0.5);
+            RelativeSize(pictSubExtinguisher, 0.0462, 1);
+            RelativeLocation(pictSubExtinguisher, 0.3769, 0.5);
             pictSubExtinguisher.Image = Image.FromFile(projectDirectory + "\\img\\subExtinguisher.jpeg");
             pictSubExtinguisher.SizeMode = PictureBoxSizeMode.StretchImage;
 
             lblSubExtinguisher.Parent = pnlSub;
             lblSubExtinguisher.AutoSize = false;
-            RelativeSize(lblSubExtinguisher, 0.2, 1);
-            RelativeLocation(lblSubExtinguisher, 0.665, 0.5);
+            RelativeSize(lblSubExtinguisher, 0.132, 1);
+            RelativeLocation(lblSubExtinguisher, 0.4838, 0.5);
             lblSubExtinguisher.Text = "Extintor";
             lblSubExtinguisher.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
             lblSubExtinguisher.BackColor = System.Drawing.Color.Transparent;
@@ -717,8 +732,8 @@ namespace game
             lblSubExtinguisher.TextAlign = ContentAlignment.MiddleLeft;
 
             pictSubDimensionsFrame.Parent = pnlSub;
-            RelativeSize(pictSubDimensionsFrame, 0.07, 1);
-            RelativeLocation(pictSubDimensionsFrame, 0.78, 0.5);
+            RelativeSize(pictSubDimensionsFrame, 0.0462, 1);
+            RelativeLocation(pictSubDimensionsFrame, 0.5568, 0.5);
             pictSubDimensionsFrame.BackColor = System.Drawing.Color.Black;
 
             pictSubDimensions.Parent = pictSubDimensionsFrame;
@@ -728,16 +743,33 @@ namespace game
 
             lblSubDimensions.Parent = pnlSub;
             lblSubDimensions.AutoSize = false;
-            RelativeSize(lblSubDimensions, 0.2, 1);
-            RelativeLocation(lblSubDimensions, 0.92, 0.5);
+            RelativeSize(lblSubDimensions, 0.132, 1);
+            RelativeLocation(lblSubDimensions, 0.6637, 0.5);
             lblSubDimensions.Text = "1 x 1 [m]";
             lblSubDimensions.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
             lblSubDimensions.BackColor = System.Drawing.Color.Transparent;
             lblSubDimensions.ForeColor = System.Drawing.Color.Black;
             lblSubDimensions.TextAlign = ContentAlignment.MiddleLeft;
+
+            pictSubDoors.Parent = pnlSub;
+            RelativeSize(pictSubDoors, 0.0462, 1);
+            RelativeLocation(pictSubDoors, 0.7337, 0.5);
+            pictSubDoors.BackColor = System.Drawing.Color.FromArgb(0, 38, 255);
+
+            lblSubDoors.Parent = pnlSub;
+            lblSubDoors.AutoSize = false;
+            RelativeSize(lblSubDoors, 0.192, 1);
+            RelativeLocation(lblSubDoors, 0.8706, 0.5);
+            lblSubDoors.Text = "Largura de Porta";
+            lblSubDoors.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
+            lblSubDoors.BackColor = System.Drawing.Color.Transparent;
+            lblSubDoors.ForeColor = System.Drawing.Color.Black;
+            lblSubDoors.TextAlign = ContentAlignment.MiddleLeft;
             #endregion
 
             #region Controls
+            pnlSub.Controls.Add(lblSubDoors);
+            pnlSub.Controls.Add(pictSubDoors);
             pictSubDimensionsFrame.Controls.Add(pictSubDimensions);
             pnlSub.Controls.Add(lblSubDimensions);
             pnlSub.Controls.Add(pictSubDimensionsFrame);
@@ -749,7 +781,9 @@ namespace game
             pnlSub.Controls.Add(pictSubExit);
             pnlCenter.Controls.Add(pnlSub);
             pnlCenter.Controls.Add(pictCaseImage);
-            pnlCenter.Controls.Add(lblCaseImageDesc);
+
+            this.Controls.Add(lblCaseImageDesc);
+            this.Controls.Add(lblCaseImageDescCopy);
 
             pnlRBarFormBack.Controls.Add(clCaseOptions);
             pnlRBarFormBack.Controls.Add(lblCaseC);
@@ -806,9 +840,15 @@ namespace game
             if (lblCaseImageDesc == null || clCaseOptions == null) return;
 
             if (clCaseOptions.CheckedItems.Count == 3 && e.NewValue == CheckState.Checked)
-                lblCaseImageDesc.Text = "Estado do projeto: Aprovado";
+            {
+                lblCaseImageDesc.Text = "Aprovado";
+                lblCaseImageDesc.ForeColor = Color.Green;
+            }
             else
-                lblCaseImageDesc.Text = "Estado do projeto: Reprovado";
+            {
+                lblCaseImageDesc.Text = "Reprovado";
+                lblCaseImageDesc.ForeColor = Color.Red;
+            }
         }
         private void NextCase_Click(object sender, EventArgs e)
         {
