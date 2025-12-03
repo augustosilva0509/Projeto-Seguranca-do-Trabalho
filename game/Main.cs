@@ -541,7 +541,6 @@ namespace game
             Label pnlRBarFormBorder = new Label();
             Label pnlRBarFormBack = new Label();
             Label lblCaseRisk = new Label();
-            Label lblCaseWeight = new Label();
             Label lblCaseC = new Label();
             Label lblCaseP = new Label();
             CheckedListBox clCaseOptions = new CheckedListBox();
@@ -583,14 +582,6 @@ namespace game
             RelativeLocation(lblCaseRisk, 0.02, 0.075, AnchorPos.TopLeft);
             lblCaseRisk.ForeColor = System.Drawing.Color.Black;
             lblCaseRisk.BackColor = System.Drawing.Color.Transparent;
-
-            lblCaseWeight.Parent = pnlRBarFormBack;
-            lblCaseWeight.Name = "lblCaseWeight";
-            lblCaseWeight.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.0142), FontStyle.Bold);
-            lblCaseWeight.AutoSize = true;
-            RelativeLocation(lblCaseWeight, 0.478, 0.075, AnchorPos.TopLeft);
-            lblCaseWeight.ForeColor = System.Drawing.Color.Black;
-            lblCaseWeight.BackColor = System.Drawing.Color.Transparent;
 
             lblCaseC.Parent = pnlRBarFormBack;
             lblCaseC.Name = "lblCaseC";
@@ -645,6 +636,9 @@ namespace game
             Label lblSubAlarm = new Label();
             PictureBox pictSubExtinguisher = new PictureBox();
             Label lblSubExtinguisher = new Label();
+            Label pictSubDimensionsFrame = new Label();
+            Label pictSubDimensions = new Label();
+            Label lblSubDimensions = new Label();
 
             pnlCenter.Parent = this;
             pnlCenter.Name = "pnlCenter";
@@ -670,37 +664,36 @@ namespace game
 
             pnlSub.Parent = pnlCenter;
             RelativeSize(pnlSub, 0.642, 0.0704);
-            RelativeLocation(pnlSub, 0.83, 0.9084);
+            RelativeLocation(pnlSub, 0.66, 0.9084);
             pnlSub.BackColor = System.Drawing.Color.Transparent;
             pnlSub.Text = "";
 
             pictSubExit.Parent = pnlSub;
             RelativeSize(pictSubExit, 0.07, 1);
-            RelativeLocation(pictSubExit, 0.035, 0.5);
+            RelativeLocation(pictSubExit, 0.065, 0.5);
             pictSubExit.Image = Image.FromFile(projectDirectory + "\\img\\subExit.jpeg");
             pictSubExit.SizeMode = PictureBoxSizeMode.StretchImage;
 
             lblSubExit.Parent = pnlSub;
             lblSubExit.AutoSize = false;
             RelativeSize(lblSubExit, 0.2, 1);
-            RelativeLocation(lblSubExit, 0.175, 0.5);
+            RelativeLocation(lblSubExit, 0.205, 0.5);
             lblSubExit.Text = "Saída";
             lblSubExit.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
             lblSubExit.BackColor = System.Drawing.Color.Transparent;
             lblSubExit.ForeColor = System.Drawing.Color.Black;
             lblSubExit.TextAlign = ContentAlignment.MiddleLeft;
-            
 
             pictSubAlarm.Parent = pnlSub;
             RelativeSize(pictSubAlarm, 0.07, 1);
-            RelativeLocation(pictSubAlarm, 0.27, 0.5);
+            RelativeLocation(pictSubAlarm, 0.28, 0.5);
             pictSubAlarm.Image = Image.FromFile(projectDirectory + "\\img\\subAlarm.jpeg");
             pictSubAlarm.SizeMode = PictureBoxSizeMode.StretchImage;
 
             lblSubAlarm.Parent = pnlSub;
             lblSubAlarm.AutoSize = false;
             RelativeSize(lblSubAlarm, 0.2, 1);
-            RelativeLocation(lblSubAlarm, 0.41, 0.5);
+            RelativeLocation(lblSubAlarm, 0.42, 0.5);
             lblSubAlarm.Text = "Alarme";
             lblSubAlarm.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
             lblSubAlarm.BackColor = System.Drawing.Color.Transparent;
@@ -722,9 +715,32 @@ namespace game
             lblSubExtinguisher.BackColor = System.Drawing.Color.Transparent;
             lblSubExtinguisher.ForeColor = System.Drawing.Color.Black;
             lblSubExtinguisher.TextAlign = ContentAlignment.MiddleLeft;
+
+            pictSubDimensionsFrame.Parent = pnlSub;
+            RelativeSize(pictSubDimensionsFrame, 0.07, 1);
+            RelativeLocation(pictSubDimensionsFrame, 0.78, 0.5);
+            pictSubDimensionsFrame.BackColor = System.Drawing.Color.Black;
+
+            pictSubDimensions.Parent = pictSubDimensionsFrame;
+            RelativeSize(pictSubDimensions, 0.9, 0.9);
+            RelativeLocation(pictSubDimensions, 0.5, 0.5);
+            pictSubDimensions.BackColor = System.Windows.Forms.Control.DefaultBackColor;
+
+            lblSubDimensions.Parent = pnlSub;
+            lblSubDimensions.AutoSize = false;
+            RelativeSize(lblSubDimensions, 0.2, 1);
+            RelativeLocation(lblSubDimensions, 0.92, 0.5);
+            lblSubDimensions.Text = "1 x 1 [m]";
+            lblSubDimensions.Font = new System.Drawing.Font("Arial", (int)(resolution * 0.019), FontStyle.Bold);
+            lblSubDimensions.BackColor = System.Drawing.Color.Transparent;
+            lblSubDimensions.ForeColor = System.Drawing.Color.Black;
+            lblSubDimensions.TextAlign = ContentAlignment.MiddleLeft;
             #endregion
 
             #region Controls
+            pictSubDimensionsFrame.Controls.Add(pictSubDimensions);
+            pnlSub.Controls.Add(lblSubDimensions);
+            pnlSub.Controls.Add(pictSubDimensionsFrame);
             pnlSub.Controls.Add(lblSubExtinguisher);
             pnlSub.Controls.Add(pictSubExtinguisher);
             pnlSub.Controls.Add(lblSubAlarm);
@@ -738,7 +754,6 @@ namespace game
             pnlRBarFormBack.Controls.Add(clCaseOptions);
             pnlRBarFormBack.Controls.Add(lblCaseC);
             pnlRBarFormBack.Controls.Add(lblCaseP);
-            pnlRBarFormBack.Controls.Add(lblCaseWeight);
             pnlRBarFormBack.Controls.Add(lblCaseRisk);
             pnlRBarForm.Controls.Add(pnlRBarFormBack);
             pnlRBarForm.Controls.Add(pnlRBarFormBorder);
@@ -763,18 +778,16 @@ namespace game
             Label pnlHeaderTitle = GetComponent("pnlHeaderTitle") as Label;
             Label lblCaseRisk = GetComponent("lblCaseRisk") as Label;
             Label lblCaseC = GetComponent("lblCaseC") as Label;
-            Label lblCaseWeight = GetComponent("lblCaseWeight") as Label;
             Label lblCaseP = GetComponent("lblCaseP") as Label;
             Label lblStaticHeaderTimer = GetComponent("lblStaticHeaderTimer") as Label;
             Label lblDynamicHeaderTimer = GetComponent("lblDynamicHeaderTimer") as Label;
             PictureBox pictCaseImage = GetComponent("pictCaseImage") as PictureBox;
             CheckedListBox clCaseOptions = GetComponent("clCaseOptions") as CheckedListBox;
-            if (clCaseOptions == null || pictCaseImage == null || lblDynamicHeaderTimer == null || lblStaticHeaderTimer == null || pnlHeaderTitle == null || lblCaseRisk == null || lblCaseWeight == null || lblCaseP == null || lblCaseC == null) return;
+            if (clCaseOptions == null || pictCaseImage == null || lblDynamicHeaderTimer == null || lblStaticHeaderTimer == null || pnlHeaderTitle == null || lblCaseRisk == null || lblCaseP == null || lblCaseC == null) return;
 
 
             pnlHeaderTitle.Text = $"Caso {game.caseNumber} - {game.currentCase.Name}";
-            lblCaseRisk.Text = $"Risco: {game.currentCase.RiskText()}";
-            lblCaseWeight.Text = $"Gravidade: {game.currentCase.GravityText()}";
+            lblCaseRisk.Text = $"Risco de Incêndio: {game.currentCase.RiskText()}";
             lblCaseC.Text = $"Capacidade de Passagem: {game.currentCase.C}";
             lblCaseP.Text = $"População: {game.currentCase.P}";
             pictCaseImage.Image = Image.FromFile(projectDirectory + $"img\\{game.currentCase.ImgName}");

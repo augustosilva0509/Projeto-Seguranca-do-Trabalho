@@ -1,92 +1,42 @@
 [
   {
-    "Name": "Escritório de Contabilidade",
-    "CheckIndexes": [0, 1, 3],
-    "P": 1,
-    "C": 2,
-    "Gravity": 1,
-    "Risk": 1,
-    "ImgName": "cyan.png"
+    "Name": "Escola",
+    "CheckIndexes": [1, 2, 3],
+    "P": 200,
+    "C": 80,
+    "Risk": 3,
+    "ImgName": "Sala1.png"
   },
   {
-    "Name": "Escola",
-    "CheckIndexes": [0],
-    "P": 3,
-    "C": 4,
-    "Gravity": 3,
+    "Name": "Escritório A",
+    "CheckIndexes": [1, 2],
+    "P": 120,
+    "C": 100,
     "Risk": 1,
-    "ImgName": "escola.png"
+    "ImgName": "Sala2.png"
+  },
+  {
+    "Name": "Hospital",
+    "CheckIndexes": [1, 2, 3],
+    "P": 220,
+    "C": 60,
+    "Risk": 3,
+    "ImgName": "Sala3.png"
   },
   {
     "Name": "Escritório B",
+    "CheckIndexes": [0, 1, 2, 3],
+    "P": 280,
+    "C": 100,
+    "Risk": 1,
+    "ImgName": "Sala4.png"
+  },
+  {
+    "Name": "Hotel",
     "CheckIndexes": [2, 3],
-    "P": 5,
-    "C": 6,
-    "Gravity": 2,
+    "P": 80,
+    "C": 90,
     "Risk": 2,
-    "ImgName": "pink.png"
-  },
-  {
-    "Name": "Escritório C",
-    "CheckIndexes": [],
-    "P": 7,
-    "C": 8,
-    "Gravity": 1,
-    "Risk": 3,
-    "ImgName": "blue.png"
-  },
-  {
-    "Name": "Escritório D",
-    "CheckIndexes": [1, 3],
-    "P": 2,
-    "C": 5,
-    "Gravity": 2,
-    "Risk": 1,
-    "ImgName": "black.png"
-  },
-  {
-    "Name": "Escritório E",
-    "CheckIndexes": [0, 2],
-    "P": 4,
-    "C": 3,
-    "Gravity": 1,
-    "Risk": 2,
-    "ImgName": "cyan.png"
-  },
-  {
-    "Name": "Escritório F",
-    "CheckIndexes": [3],
-    "P": 6,
-    "C": 9,
-    "Gravity": 3,
-    "Risk": 3,
-    "ImgName": "yellow.png"
-  },
-  {
-    "Name": "Escritório G",
-    "CheckIndexes": [1, 2],
-    "P": 8,
-    "C": 7,
-    "Gravity": 2,
-    "Risk": 2,
-    "ImgName": "pink.png"
-  },
-  {
-    "Name": "Escritório H",
-    "CheckIndexes": [],
-    "P": 9,
-    "C": 10,
-    "Gravity": 1,
-    "Risk": 1,
-    "ImgName": "blue.png"
-  },
-  {
-    "Name": "Escritório I",
-    "CheckIndexes": [0, 3],
-    "P": 10,
-    "C": 12,
-    "Gravity": 3,
-    "Risk": 3,
-    "ImgName": "black.png"
+    "ImgName": "Sala5.png"
   }
 ]
